@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "bushcraft",
+  "version": "${version}",
+  "name": "Bushcraft",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": ["Me!"],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/bushcraft/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.jship.bushcraft.fabric.BushcraftFabric"],
+    "client": ["com.jship.bushcraft.fabric.client.BushcraftFabricClient"],
+    "fabric-datagen": ["com.jship.bushcraft.fabric.datagen.BushcraftDatagen"],
+    "jade": ["com.jship.bushcraft.compat.jade.BushcraftJadePlugin"],
+    "emi": ["com.jship.bushcraft.compat.emi.BushcraftEmiPlugin"],
+    "jei_mod_plugin": ["com.jship.bushcraft.compat.jei.BushcraftJeiPlugin"],
+    "rei_client": ["com.jship.bushcraft.fabric.compat.rei.BushcraftReiPlugin"]
+  },
+  "mixins": ["bushcraft.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "architectury": ">=13.0.8",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}

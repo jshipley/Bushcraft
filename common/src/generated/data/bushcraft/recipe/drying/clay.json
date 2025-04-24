@@ -1,0 +1,11 @@
+{
+  "type": "bushcraft:drying",
+  "category": "blocks",
+  "ingredient": {
+    "item": "minecraft:mud"
+  },
+  "result": {
+    "id": "minecraft:clay"
+  },
+  "time": 900
+}

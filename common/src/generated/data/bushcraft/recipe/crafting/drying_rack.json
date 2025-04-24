@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": {
+      "tag": "minecraft:logs_that_burn"
+    },
+    "R": {
+      "tag": "c:rods/wooden"
+    },
+    "S": {
+      "tag": "minecraft:wooden_slabs"
+    }
+  },
+  "pattern": [
+    "SRS",
+    "L L"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bushcraft:drying_rack"
+  }
+}

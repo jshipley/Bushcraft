@@ -1,0 +1,10 @@
+{
+  "block.bushcraft.drying_rack": "Drying Rack",
+  "stat.bushcraft.interact_with_drying_rack": "Interactions with Drying Rack",
+  "emi.category.bushcraft.drying": "Drying",
+  "gui.jei.category.bushcraft.drying": "Drying",
+  "rei.category.bushcraft.drying": "Drying",
+  "gui.bushcraft.time_seconds": "%d seconds",
+  "item.bushcraft.green_fiber": "Green Fiber",
+  "item.bushcraft.fiber_twine": "Fiber Twine"
+}

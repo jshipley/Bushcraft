@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_green_fiber": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bushcraft:green_fiber"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bushcraft:crafting/string_from_green_fiber"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_green_fiber"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bushcraft:crafting/string_from_green_fiber"
+    ]
+  }
+}

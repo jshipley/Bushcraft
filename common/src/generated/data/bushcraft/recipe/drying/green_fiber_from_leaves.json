@@ -1,0 +1,11 @@
+{
+  "type": "bushcraft:drying",
+  "category": "misc",
+  "ingredient": {
+    "tag": "minecraft:leaves"
+  },
+  "result": {
+    "id": "bushcraft:green_fiber"
+  },
+  "time": 900
+}
