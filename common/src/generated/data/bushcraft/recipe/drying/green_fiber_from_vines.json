@@ -1,0 +1,19 @@
+{
+  "type": "bushcraft:drying",
+  "category": "misc",
+  "ingredient": [
+    {
+      "item": "minecraft:vine"
+    },
+    {
+      "item": "minecraft:weeping_vines"
+    },
+    {
+      "item": "minecraft:twisting_vines"
+    }
+  ],
+  "result": {
+    "id": "bushcraft:green_fiber"
+  },
+  "time": 900
+}

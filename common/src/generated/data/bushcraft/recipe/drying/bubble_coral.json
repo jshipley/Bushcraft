@@ -1,0 +1,11 @@
+{
+  "type": "bushcraft:drying",
+  "category": "blocks",
+  "ingredient": {
+    "item": "minecraft:bubble_coral"
+  },
+  "result": {
+    "id": "minecraft:dead_bubble_coral"
+  },
+  "time": 900
+}

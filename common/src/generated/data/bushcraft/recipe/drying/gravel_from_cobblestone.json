@@ -1,0 +1,12 @@
+{
+  "type": "bushcraft:washing",
+  "category": "blocks",
+  "cookingtime": 200,
+  "experience": 0.1,
+  "ingredient": {
+    "tag": "c:cobblestones"
+  },
+  "result": {
+    "id": "minecraft:gravel"
+  }
+}

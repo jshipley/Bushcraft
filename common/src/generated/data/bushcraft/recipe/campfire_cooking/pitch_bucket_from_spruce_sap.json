@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "food",
+  "cookingtime": 600,
+  "experience": 2.0,
+  "ingredient": {
+    "item": "bushcraft:spruce_sap_bucket"
+  },
+  "result": {
+    "id": "bushcraft:pitch_bucket"
+  }
+}

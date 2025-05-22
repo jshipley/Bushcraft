@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "tag": "c:strings"
+    },
+    "W": {
+      "item": "minecraft:honeycomb"
+    }
+  },
+  "pattern": [
+    "S",
+    "W"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:candle"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "R": {
+      "tag": "c:rods/wooden"
+    },
+    "S": {
+      "tag": "c:strings"
+    }
+  },
+  "pattern": [
+    "  R",
+    " RS",
+    "R S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:fishing_rod"
+  }
+}

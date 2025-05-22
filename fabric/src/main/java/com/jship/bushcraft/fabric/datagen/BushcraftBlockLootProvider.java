@@ -15,5 +15,9 @@ public class BushcraftBlockLootProvider extends FabricBlockLootTableProvider {
     @Override
     public void generate() {
         dropSelf(ModBlocks.DRYING_RACK.get());
+        dropSelf(ModBlocks.HAND_PUMP.get());
+        dropSelf(ModBlocks.PITCH_BLOCK.get());
+        dropSelf(ModBlocks.TREE_TAP.get());
+        dropSelf(ModBlocks.WASHER.get());
     }
 }

@@ -1,0 +1,11 @@
+{
+  "type": "bushcraft:drying",
+  "category": "blocks",
+  "ingredient": {
+    "item": "minecraft:bubble_coral_fan"
+  },
+  "result": {
+    "id": "minecraft:dead_bubble_coral_fan"
+  },
+  "time": 900
+}

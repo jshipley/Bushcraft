@@ -1,0 +1,11 @@
+{
+  "type": "bushcraft:drying",
+  "category": "blocks",
+  "ingredient": {
+    "item": "minecraft:horn_coral_block"
+  },
+  "result": {
+    "id": "minecraft:dead_horn_coral_block"
+  },
+  "time": 900
+}

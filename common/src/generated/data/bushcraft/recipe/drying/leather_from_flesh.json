@@ -1,0 +1,11 @@
+{
+  "type": "bushcraft:drying",
+  "category": "misc",
+  "ingredient": {
+    "item": "minecraft:rotten_flesh"
+  },
+  "result": {
+    "id": "minecraft:leather"
+  },
+  "time": 900
+}

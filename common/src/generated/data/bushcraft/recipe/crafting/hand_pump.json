@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:bamboo"
+    },
+    "C": {
+      "tag": "c:ingots/copper"
+    },
+    "R": {
+      "tag": "c:rods/wooden"
+    },
+    "S": {
+      "item": "minecraft:stone_slab"
+    },
+    "W": {
+      "item": "bushcraft:wooden_cog"
+    }
+  },
+  "pattern": [
+    "RB ",
+    "WBC",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bushcraft:hand_pump"
+  }
+}

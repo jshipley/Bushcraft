@@ -1,0 +1,11 @@
+{
+  "type": "bushcraft:drying",
+  "category": "blocks",
+  "ingredient": {
+    "item": "minecraft:fire_coral"
+  },
+  "result": {
+    "id": "minecraft:dead_fire_coral"
+  },
+  "time": 900
+}

@@ -1,0 +1,66 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.model.working": {
+			"animation_length": 1,
+			"bones": {
+				"piston": {
+					"position": {
+						"0.0": {
+							"vector": [0, 2.7, 0]
+						},
+						"0.3": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, -1, 0]
+						},
+						"0.7": {
+							"vector": [0, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 2.7, 0]
+						}
+					}
+				},
+				"arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [25, 0, 0]
+						},
+						"0.3": {
+							"vector": [0, 0, 0],
+							"easing": "linear"
+						},
+						"0.5": {
+							"vector": [-12.5, 0, 0],
+							"easing": "linear"
+						},
+						"0.7": {
+							"vector": [0, 0, 0],
+							"easing": "linear"
+						},
+						"1.0": {
+							"vector": [25, 0, 0]
+						}
+					}
+				}
+			}
+		},
+		"animation.model.idle": {
+			"loop": "hold_on_last_frame",
+			"bones": {
+				"arm": {
+					"rotation": {
+						"vector": [25, 0, 0]
+					}
+				},
+				"piston": {
+					"position": {
+						"vector": [0, 2.7, 0]
+					}
+				}
+			}
+		}
+	}
+}

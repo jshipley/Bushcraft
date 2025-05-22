@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "bushcraft:block/tree_tap",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "bushcraft:block/tree_tap",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "bushcraft:block/tree_tap"
+    },
+    "facing=west": {
+      "model": "bushcraft:block/tree_tap",
+      "y": 90
+    }
+  }
+}

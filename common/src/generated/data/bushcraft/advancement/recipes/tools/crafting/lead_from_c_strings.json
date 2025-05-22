@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_slime": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:slime_balls"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bushcraft:crafting/lead_from_c_strings"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_slime"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bushcraft:crafting/lead_from_c_strings"
+    ]
+  }
+}

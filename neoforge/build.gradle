@@ -40,6 +40,12 @@ dependencies {
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
 
+    // Geckolib
+    implementation "software.bernie.geckolib:geckolib-neoforge-${rootProject.minecraft_version}:${rootProject.geckolib_version}"
+
+    // include(modImplementation("curse.maven:spirit-api-1261885:${spirit_api_version_id_neoforge}"))
+    include(compileOnly ("com.jship.spiritapi:spiritapi-neoforge:1.0.1-1.21.1"))
+
     // Jade
     implementation "curse.maven:jade-324717:$rootProject.jade_version_id_neoforge"
 

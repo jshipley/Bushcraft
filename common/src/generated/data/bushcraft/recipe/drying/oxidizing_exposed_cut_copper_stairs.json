@@ -1,0 +1,12 @@
+{
+  "type": "bushcraft:washing",
+  "category": "blocks",
+  "cookingtime": 200,
+  "experience": 0.3,
+  "ingredient": {
+    "item": "minecraft:exposed_cut_copper_stairs"
+  },
+  "result": {
+    "id": "minecraft:oxidized_cut_copper_stairs"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "bushcraft:block/washer",
+  "textures": {
+    "layer0": "bushcraft:block/washer_on"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "bushcraft:drying",
+  "category": "blocks",
+  "ingredient": {
+    "item": "minecraft:brain_coral_block"
+  },
+  "result": {
+    "id": "minecraft:dead_brain_coral_block"
+  },
+  "time": 900
+}

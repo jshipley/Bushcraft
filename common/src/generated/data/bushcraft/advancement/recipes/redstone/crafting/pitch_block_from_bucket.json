@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pitch_bucket": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bushcraft:pitch_bucket"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bushcraft:crafting/pitch_block_from_bucket"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_pitch_bucket"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bushcraft:crafting/pitch_block_from_bucket"
+    ]
+  }
+}

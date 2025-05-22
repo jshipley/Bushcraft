@@ -12,6 +12,8 @@ public class BushcraftDatagen implements DataGeneratorEntrypoint {
         pack.addProvider(BushcraftModelProvider::new);
         pack.addProvider(BushcraftBlockLootProvider::new);
         pack.addProvider(BushcraftRecipeProvider::new);
+        pack.addProvider(BushcraftBlockTagProvider::new);
+        pack.addProvider(BushcraftFluidTagProvider::new);
         pack.addProvider(BushcraftItemTagProvider::new);
     }
 }

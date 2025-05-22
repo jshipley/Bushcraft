@@ -1,0 +1,57 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.model.working": {
+			"loop": true,
+			"animation_length": 1,
+			"bones": {
+				"gear": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.125": {
+							"vector": [0, -45, 0],
+							"easing": "easeInOutBack"
+						},
+						"0.25": {
+							"pre": [0, -90, 0],
+							"post": [0, -90, 0],
+							"easing": "easeInOutBack"
+						},
+						"0.375": {
+							"vector": [0, -135, 0],
+							"easing": "easeInOutBack"
+						},
+						"0.5": {
+							"pre": [0, -180, 0],
+							"post": [0, -180, 0],
+							"easing": "easeInOutBack"
+						},
+						"0.625": {
+							"vector": [0, -225, 0],
+							"easing": "easeInOutBack"
+						},
+						"0.75": {
+							"pre": [0, -270, 0],
+							"post": [0, -270, 0],
+							"easing": "easeInOutBack"
+						},
+						"0.875": {
+							"vector": [0, -315, 0],
+							"easing": "easeInOutBack"
+						},
+						"1.0": {
+							"vector": [0, -360, 0],
+							"easing": "easeInOutBack"
+						}
+					}
+				}
+			}
+		},
+		"animation.model.idle": {
+			"loop": "hold_on_last_frame"
+		}
+	},
+	"geckolib_format_version": 2
+}

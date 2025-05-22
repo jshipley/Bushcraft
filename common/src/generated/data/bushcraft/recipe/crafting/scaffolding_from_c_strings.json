@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "B": {
+      "item": "minecraft:bamboo"
+    },
+    "S": {
+      "tag": "c:strings"
+    }
+  },
+  "pattern": [
+    "BSB",
+    "B B",
+    "B B"
+  ],
+  "result": {
+    "count": 6,
+    "id": "minecraft:scaffolding"
+  }
+}

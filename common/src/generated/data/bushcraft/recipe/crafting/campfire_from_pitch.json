@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": {
+      "tag": "minecraft:logs"
+    },
+    "P": {
+      "item": "bushcraft:pitch"
+    },
+    "R": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "pattern": [
+    " R ",
+    "RPR",
+    "LLL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:campfire"
+  }
+}

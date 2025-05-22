@@ -9,14 +9,15 @@ import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
 import java.util.List;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 public class EmiDryingRecipe extends BasicEmiRecipe {
 
     private final int time;
 
-    public EmiDryingRecipe(DryingRecipe recipe) {
+    public EmiDryingRecipe(ResourceLocation id, DryingRecipe recipe) {
         super(BushcraftEmiPlugin.DRYING_CATEGORY, BushcraftEmiPlugin.DRYING_ID, 76, 18);
-        // this.id = recipe.();
+        this.id = id;
         this.inputs.add(EmiIngredient.of(recipe.ingredient()));
         this.outputs.add(EmiStack.of(recipe.result()));
         this.time = recipe.time();

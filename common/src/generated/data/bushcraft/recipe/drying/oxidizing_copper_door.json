@@ -1,0 +1,12 @@
+{
+  "type": "bushcraft:washing",
+  "category": "blocks",
+  "cookingtime": 200,
+  "experience": 0.3,
+  "ingredient": {
+    "item": "minecraft:copper_door"
+  },
+  "result": {
+    "id": "minecraft:oxidized_copper_door"
+  }
+}

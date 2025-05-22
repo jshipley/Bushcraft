@@ -1,0 +1,11 @@
+{
+  "type": "bushcraft:drying",
+  "category": "blocks",
+  "ingredient": {
+    "item": "minecraft:tube_coral"
+  },
+  "result": {
+    "id": "minecraft:dead_tube_coral"
+  },
+  "time": 900
+}

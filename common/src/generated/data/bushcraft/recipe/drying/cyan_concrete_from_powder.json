@@ -1,0 +1,12 @@
+{
+  "type": "bushcraft:washing",
+  "category": "blocks",
+  "cookingtime": 200,
+  "experience": 0.2,
+  "ingredient": {
+    "item": "minecraft:cyan_concrete_powder"
+  },
+  "result": {
+    "id": "minecraft:cyan_concrete"
+  }
+}

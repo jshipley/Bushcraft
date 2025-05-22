@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_spruce_sap_bucket": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bushcraft:spruce_sap_bucket"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bushcraft:campfire_cooking/pitch_bucket_from_spruce_sap"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_spruce_sap_bucket"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bushcraft:campfire_cooking/pitch_bucket_from_spruce_sap"
+    ]
+  }
+}

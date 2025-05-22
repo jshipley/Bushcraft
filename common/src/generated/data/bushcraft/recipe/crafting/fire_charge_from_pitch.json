@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:blaze_powder"
+    },
+    "G": {
+      "tag": "c:gunpowders"
+    },
+    "P": {
+      "item": "bushcraft:pitch"
+    }
+  },
+  "pattern": [
+    "GBP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:torch"
+  }
+}

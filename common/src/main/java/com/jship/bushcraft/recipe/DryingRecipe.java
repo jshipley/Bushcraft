@@ -36,8 +36,8 @@ public record DryingRecipe(String group, CookingBookCategory category, Ingredien
         return new DryingRecipe(group, withCategory, ingredient, result, time);
     }
 
-    public DryingRecipe ingredient(ItemLike withIngredient) {
-        return ingredient(Ingredient.of(withIngredient));
+    public DryingRecipe ingredient(ItemLike... withIngredients) {
+        return ingredient(Ingredient.of(withIngredients));
     }
 
     public DryingRecipe ingredient(TagKey<Item> withIngredient) {

@@ -1,0 +1,12 @@
+{
+  "type": "bushcraft:washing",
+  "category": "blocks",
+  "cookingtime": 200,
+  "experience": 0.2,
+  "ingredient": {
+    "item": "minecraft:white_concrete_powder"
+  },
+  "result": {
+    "id": "minecraft:white_concrete"
+  }
+}

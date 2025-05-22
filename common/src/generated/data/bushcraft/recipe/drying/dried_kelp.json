@@ -1,0 +1,11 @@
+{
+  "type": "bushcraft:drying",
+  "category": "food",
+  "ingredient": {
+    "item": "minecraft:kelp"
+  },
+  "result": {
+    "id": "minecraft:dried_kelp"
+  },
+  "time": 900
+}
