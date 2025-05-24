@@ -1,0 +1,19 @@
+{
+  "values": [
+    "minecraft:magma_block",
+    "minecraft:fire",
+    "#minecraft:campfires",
+    {
+      "id": "blazingbamboo:blazing_bamboo_bundle",
+      "required": false
+    },
+    {
+      "id": "blazingbamboo:blazing_stone",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:stove",
+      "required": false
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "type": "bushcraft:melting",
+  "category": "misc",
+  "ingredient": {
+    "tag": "c:gravels"
+  },
+  "result": {
+    "buckets": 0.25,
+    "fluid": "minecraft:lava"
+  },
+  "time": 2400
+}

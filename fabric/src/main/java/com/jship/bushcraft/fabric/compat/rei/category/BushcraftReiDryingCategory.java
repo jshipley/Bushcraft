@@ -1,11 +1,13 @@
 package com.jship.bushcraft.fabric.compat.rei.category;
 
-import com.google.common.collect.Lists;
-import com.jship.bushcraft.Bushcraft.ModBlocks;
-import com.jship.bushcraft.fabric.compat.rei.BushcraftReiPlugin;
-import com.jship.bushcraft.fabric.compat.rei.display.BushcraftReiDryingDisplay;
 import java.util.Collections;
 import java.util.List;
+
+import com.google.common.collect.Lists;
+import com.jship.bushcraft.fabric.compat.rei.BushcraftReiPlugin;
+import com.jship.bushcraft.fabric.compat.rei.display.BushcraftReiDryingDisplay;
+import com.jship.bushcraft.init.ModBlocks;
+
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.DisplayRenderer;

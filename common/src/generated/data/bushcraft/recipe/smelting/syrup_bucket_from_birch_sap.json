@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 1.0,
+  "ingredient": {
+    "item": "bushcraft:birch_sap_bucket"
+  },
+  "result": {
+    "id": "bushcraft:syrup_bucket"
+  }
+}

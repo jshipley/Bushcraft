@@ -1,17 +1,17 @@
 modLoader = "javafml"
 loaderVersion = "[4,)"
-#issueTrackerURL = ""
-license = "Insert License Here"
+issueTrackerURL = "https://github.com/jshipley/Bushcraft/issues"
+license = "MIT"
 
 [[mods]]
 modId = "bushcraft"
 version = "${version}"
 displayName = "Bushcraft"
-authors = "Me!"
+authors = "jship"
 description = '''
-This is an example description! Tell everyone what your mod is about!
+Bushcraft is a low-tech tech mod that can help you survive and gather resources, especially in the early game.
 '''
-#logoFile = ""
+logoFile = "assets/bushcraft/icon.png"
 
 [[dependencies.bushcraft]]
 modId = "neoforge"
@@ -31,6 +31,13 @@ side = "BOTH"
 modId = "architectury"
 type = "required"
 versionRange = "[13.0.8,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.bushcraft]]
+modId = "geckolib"
+type = "required"
+versionRange = "[4.7.5,)"
 ordering = "AFTER"
 side = "BOTH"
 

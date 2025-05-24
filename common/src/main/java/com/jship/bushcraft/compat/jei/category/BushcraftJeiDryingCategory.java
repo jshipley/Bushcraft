@@ -1,8 +1,9 @@
 package com.jship.bushcraft.compat.jei.category;
 
-import com.jship.bushcraft.Bushcraft.ModBlocks;
 import com.jship.bushcraft.compat.jei.BushcraftJeiPlugin;
+import com.jship.bushcraft.init.ModBlocks;
 import com.jship.bushcraft.recipe.DryingRecipe;
+
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.placement.HorizontalAlignment;
 import mezz.jei.api.gui.placement.VerticalAlignment;

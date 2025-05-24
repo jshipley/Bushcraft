@@ -1,9 +1,14 @@
 package com.jship.bushcraft.block.entity;
 
-import com.jship.bushcraft.Bushcraft.ModBlockEntities;
-import com.jship.bushcraft.Bushcraft.ModRecipes;
-import com.jship.bushcraft.recipe.DryingRecipe;
 import java.util.Optional;
+
+import org.jetbrains.annotations.Nullable;
+
+import com.jship.bushcraft.init.ModBlockEntities;
+import com.jship.bushcraft.init.ModRecipes;
+import com.jship.bushcraft.recipe.DryingRecipe;
+
+import lombok.val;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -28,7 +33,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.GameEvent.Context;
-import org.jetbrains.annotations.Nullable;
 
 public class DryingRackBlockEntity extends BlockEntity implements WorldlyContainer {
 
@@ -80,11 +84,12 @@ public class DryingRackBlockEntity extends BlockEntity implements WorldlyContain
         return false;
     }
 
-    public void dropFinishedStacks(Level level, BlockPos blockPos, Player player) {
-        boolean stacksDropped = false;
-        for (int i = 0; i < SLOT_COUNT; i++) {
-            ItemStack stack = items.get(i);
+    public void dropFinishedStacks() {
+        var stacksDropped = false;
+        for (var i = 0; i < SLOT_COUNT; i++) {
+            val stack = items.get(i);
             if (!stack.isEmpty() && finishedDrying[i] > 0) {
+                val blockPos = this.getBlockPos();
                 Containers.dropItemStack(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), stack);
                 items.set(i, ItemStack.EMPTY);
                 stacksDropped = true;

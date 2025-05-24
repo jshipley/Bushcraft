@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": {
+      "item": "minecraft:flint"
+    },
+    "R": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "pattern": [
+    "F",
+    "R",
+    "R"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bushcraft:flint_shovel"
+  }
+}

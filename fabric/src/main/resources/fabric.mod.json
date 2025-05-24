@@ -3,13 +3,13 @@
   "id": "bushcraft",
   "version": "${version}",
   "name": "Bushcraft",
-  "description": "This is an example description! Tell everyone what your mod is about!",
-  "authors": ["Me!"],
+  "description": "Bushcraft is a low-tech tech mod that can help you survive and gather resources, especially in the early game.",
+  "authors": ["jship"],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://amertune.neocities.org/",
+    "sources": "https://github.com/jshipley/Bushcraft"
   },
-  "license": "CC0-1.0",
+  "license": "MIT",
   "icon": "assets/bushcraft/icon.png",
   "environment": "*",
   "entrypoints": {
@@ -27,6 +27,7 @@
     "minecraft": "~1.21.1",
     "java": ">=21",
     "architectury": ">=13.0.8",
+    "geckolib": ">=4.7.5",
     "fabric-api": "*"
   },
   "suggests": {

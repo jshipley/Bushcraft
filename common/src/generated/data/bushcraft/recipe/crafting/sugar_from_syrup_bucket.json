@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "bushcraft:syrup_bucket"
+    }
+  ],
+  "result": {
+    "count": 12,
+    "id": "minecraft:sugar"
+  }
+}

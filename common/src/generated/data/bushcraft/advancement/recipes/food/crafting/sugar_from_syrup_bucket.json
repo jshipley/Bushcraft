@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_syrup_bucket": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bushcraft:syrup_bucket"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bushcraft:crafting/sugar_from_syrup_bucket"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_syrup_bucket"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bushcraft:crafting/sugar_from_syrup_bucket"
+    ]
+  }
+}

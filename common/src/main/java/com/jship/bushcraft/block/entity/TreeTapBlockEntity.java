@@ -1,25 +1,20 @@
 package com.jship.bushcraft.block.entity;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
-import com.jship.bushcraft.Bushcraft.ModBlockEntities;
-import com.jship.bushcraft.Bushcraft.ModBlocks;
-import com.jship.bushcraft.Bushcraft.ModFluids;
 import com.jship.bushcraft.block.TreeTapBlock;
+import com.jship.bushcraft.init.ModBlockEntities;
+import com.jship.bushcraft.init.ModFluids;
+import com.jship.bushcraft.init.ModTags.ModBlockTags;
+import com.jship.bushcraft.init.ModTags.ModFluidTags;
 import com.jship.spiritapi.api.fluid.SpiritFluidStorage;
+import com.jship.spiritapi.api.fluid.SpiritFluidStorageProvider;
 
 import dev.architectury.fluid.FluidStack;
 import dev.architectury.platform.Platform;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.val;
-import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
@@ -30,12 +25,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 @Slf4j
-public class TreeTapBlockEntity extends BlockEntity {
+public class TreeTapBlockEntity extends BlockEntity implements SpiritFluidStorageProvider {
 
     private static long SAP_AMOUNT = Platform.isFabric() ? FluidStack.bucketAmount() / 9 : FluidStack.bucketAmount() / 10;
 
-    public final SpiritFluidStorage fluidStorage = SpiritFluidStorage.create(4 * FluidStack.bucketAmount(),
-            FluidStack.bucketAmount(), () -> markUpdated(), fluidStack -> fluidStack.getFluid().is(ModFluids.C_SAPS));
+    public final SpiritFluidStorage fluidStorage = SpiritFluidStorage.create(FluidStack.bucketAmount(),
+            FluidStack.bucketAmount(), () -> markUpdated(), fluidStack -> fluidStack.getFluid().is(ModFluidTags.C_SAPS));
 
     public TreeTapBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(ModBlockEntities.TREE_TAP.get(), blockPos, blockState);
@@ -57,9 +52,9 @@ public class TreeTapBlockEntity extends BlockEntity {
     }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+    public CompoundTag getUpdateTag(HolderLookup.Provider lookupProvider) {
         CompoundTag compoundTag = new CompoundTag();
-        saveAdditional(compoundTag, provider);
+        saveAdditional(compoundTag, lookupProvider);
         return compoundTag;
     }
 
@@ -74,7 +69,7 @@ public class TreeTapBlockEntity extends BlockEntity {
         val facingPos = pos.relative(state.getValue(TreeTapBlock.FACING));
         val facingBlockState = level.getBlockState(facingPos);
 
-        if (!facingBlockState.is(ModBlocks.PRODUCES_SAP))
+        if (!facingBlockState.is(ModBlockTags.PRODUCES_SAP))
             return;
 
         // search for a "healthy" tree that can produce sap
@@ -110,14 +105,14 @@ public class TreeTapBlockEntity extends BlockEntity {
         var leaves = 0;
         var curPos = pos.mutable();
 
-        while (level.getBlockState(curPos).is(ModBlocks.PRODUCES_SAP)) {
+        while (level.getBlockState(curPos).is(ModBlockTags.PRODUCES_SAP)) {
             logs++;
             for (var horizontalDir : new Direction[] { Direction.NORTH, Direction.EAST, Direction.SOUTH,
                     Direction.WEST }) {
                 var searchBlockState = level.getBlockState(curPos.relative(horizontalDir));
                 // for large (2x2) trees, if the adjacent block is a sap producing log, then
                 // look for a leaf block on the other side
-                if (searchBlockState.is(ModBlocks.PRODUCES_SAP))
+                if (searchBlockState.is(ModBlockTags.PRODUCES_SAP))
                     searchBlockState = level.getBlockState(curPos.relative(horizontalDir, 2));
                 if (searchBlockState.is(BlockTags.LEAVES) && !searchBlockState.getValue(LeavesBlock.PERSISTENT))
                     leaves++;
@@ -126,5 +121,10 @@ public class TreeTapBlockEntity extends BlockEntity {
         }
 
         return new TreeResult(level.getBlockState(curPos).is(BlockTags.DIRT), logs, leaves);
+    }
+
+    @Override
+    public SpiritFluidStorage getFluidStorage(Direction face) {
+        return fluidStorage;
     }
 }

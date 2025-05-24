@@ -1,14 +1,16 @@
 package com.jship.bushcraft.fabric.client;
 
 import com.jship.bushcraft.Bushcraft;
-import com.jship.bushcraft.Bushcraft.ModBlockEntities;
-import com.jship.bushcraft.Bushcraft.ModBlocks;
-import com.jship.bushcraft.Bushcraft.ModFluids;
-import com.jship.bushcraft.Bushcraft.ModMenus;
+import com.jship.bushcraft.client.renderer.CrucibleRenderer;
 import com.jship.bushcraft.client.renderer.DryingRackRenderer;
 import com.jship.bushcraft.client.renderer.HandPumpGeoRenderer;
+import com.jship.bushcraft.client.renderer.TreeTapRenderer;
 import com.jship.bushcraft.client.renderer.WasherGeoRenderer;
 import com.jship.bushcraft.client.screen.WasherScreen;
+import com.jship.bushcraft.init.ModBlockEntities;
+import com.jship.bushcraft.init.ModBlocks;
+import com.jship.bushcraft.init.ModFluids;
+import com.jship.bushcraft.init.ModMenus;
 
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import net.fabricmc.api.ClientModInitializer;
@@ -25,11 +27,13 @@ public final class BushcraftFabricClient implements ClientModInitializer {
         MenuScreens.register(ModMenus.WASHER.get(), WasherScreen::new);
 
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PITCH_BLOCK.get(), RenderType.translucent());
-        // BlockRenderLayerMap.INSTANCE.putFluids(RenderType.translucent(), ModFluids.BIRCH_SAP.get(),
-        //         ModFluids.BIRCH_SAP_FLOWING.get(), ModFluids.SPRUCE_SAP.get(), ModFluids.SPRUCE_SAP_FLOWING.get());
+        BlockRenderLayerMap.INSTANCE.putFluids(RenderType.translucent(), ModFluids.BIRCH_SAP.get(),
+                ModFluids.BIRCH_SAP_FLOWING.get(), ModFluids.SPRUCE_SAP.get(), ModFluids.SPRUCE_SAP_FLOWING.get());
 
+        BlockEntityRendererRegistry.register(ModBlockEntities.CRUCIBLE.get(), CrucibleRenderer::new);
         BlockEntityRendererRegistry.register(ModBlockEntities.DRYING_RACK.get(), DryingRackRenderer::new);
         BlockEntityRendererRegistry.register(ModBlockEntities.HAND_PUMP.get(), HandPumpGeoRenderer::new);
+        BlockEntityRendererRegistry.register(ModBlockEntities.TREE_TAP.get(), TreeTapRenderer::new);
         BlockEntityRendererRegistry.register(ModBlockEntities.WASHER.get(), WasherGeoRenderer::new);
     }
 }

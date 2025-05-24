@@ -1,0 +1,12 @@
+{
+  "type": "bushcraft:melting",
+  "category": "misc",
+  "ingredient": {
+    "item": "minecraft:snowball"
+  },
+  "result": {
+    "buckets": 0.25,
+    "fluid": "minecraft:water"
+  },
+  "time": 400
+}

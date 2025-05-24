@@ -1,9 +1,8 @@
 package com.jship.bushcraft.fabric;
 
 import com.jship.bushcraft.Bushcraft;
-import com.jship.bushcraft.Bushcraft.ModBlockEntities;
-import com.jship.bushcraft.block.entity.TreeTapBlockEntity;
-import com.jship.bushcraft.block.entity.WasherGeoBlockEntity;
+import com.jship.bushcraft.init.ModBlockEntities;
+import com.jship.spiritapi.api.fluid.SpiritFluidStorageProvider;
 import com.jship.spiritapi.api.fluid.fabric.SpiritFluidStorageImpl;
 
 import net.fabricmc.api.ModInitializer;
@@ -18,8 +17,13 @@ public final class BushcraftFabric implements ModInitializer {
     public void onInitialize() {
         Bushcraft.init();
 
-        ItemStorage.SIDED.registerForBlockEntities((blockEntity, direction) -> InventoryStorage.of((WorldlyContainer) blockEntity, null), ModBlockEntities.DRYING_RACK.get());
-        FluidStorage.SIDED.registerForBlockEntities((blockEntity, direction) -> ((SpiritFluidStorageImpl)((WasherGeoBlockEntity)blockEntity).fluidStorage).fabricFluidStorage, ModBlockEntities.WASHER.get());
-        FluidStorage.SIDED.registerForBlockEntities((blockEntity, direction) -> ((SpiritFluidStorageImpl)((TreeTapBlockEntity)blockEntity).fluidStorage).fabricFluidStorage, ModBlockEntities.TREE_TAP.get());
+        ItemStorage.SIDED.registerForBlockEntities(
+                (blockEntity, direction) -> InventoryStorage.of((WorldlyContainer) blockEntity, null),
+                ModBlockEntities.CRUCIBLE.get(), ModBlockEntities.DRYING_RACK.get(), ModBlockEntities.WASHER.get());
+        FluidStorage.SIDED.registerForBlockEntities(
+                (blockEntity,
+                        direction) -> ((SpiritFluidStorageImpl) ((SpiritFluidStorageProvider) blockEntity)
+                                .getFluidStorage(direction)).fabricFluidStorage,
+                ModBlockEntities.CRUCIBLE.get(), ModBlockEntities.TREE_TAP.get(), ModBlockEntities.WASHER.get());
     }
 }

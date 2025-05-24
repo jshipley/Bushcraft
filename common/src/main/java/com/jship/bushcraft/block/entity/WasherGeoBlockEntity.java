@@ -2,18 +2,20 @@ package com.jship.bushcraft.block.entity;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.jship.bushcraft.Bushcraft.ModBlockEntities;
-import com.jship.bushcraft.Bushcraft.ModRecipes;
 import com.jship.bushcraft.block.WasherBlock;
+import com.jship.bushcraft.init.ModBlockEntities;
+import com.jship.bushcraft.init.ModRecipes;
 import com.jship.bushcraft.menu.WasherMenu;
 import com.jship.bushcraft.mixin.AbstractFurnaceBlockEntityAccessor;
 import com.jship.spiritapi.api.fluid.SpiritFluidStorage;
+import com.jship.spiritapi.api.fluid.SpiritFluidStorageProvider;
 
 import dev.architectury.fluid.FluidStack;
 import dev.architectury.platform.Platform;
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentMap;
@@ -23,7 +25,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -43,7 +44,7 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 @Slf4j
-public class WasherGeoBlockEntity extends AbstractFurnaceBlockEntity implements GeoBlockEntity {
+public class WasherGeoBlockEntity extends AbstractFurnaceBlockEntity implements GeoBlockEntity, SpiritFluidStorageProvider {
 
     public static final String ANIM_NAME = "washer_animation";
     public static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenPlayAndHold("animation.model.idle");
@@ -53,7 +54,7 @@ public class WasherGeoBlockEntity extends AbstractFurnaceBlockEntity implements 
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     public final SpiritFluidStorage fluidStorage = SpiritFluidStorage.create(
-            4 * FluidStack.bucketAmount(),
+            FluidStack.bucketAmount(),
             FluidStack.bucketAmount(),
             () -> {
                 this.setChanged();
@@ -157,5 +158,10 @@ public class WasherGeoBlockEntity extends AbstractFurnaceBlockEntity implements 
         super.setChanged();
         if (!level.isClientSide())
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+    }
+
+    @Override
+    public SpiritFluidStorage getFluidStorage(Direction face) {
+        return fluidStorage;
     }
 }

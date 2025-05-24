@@ -1,0 +1,12 @@
+{
+  "type": "bushcraft:melting",
+  "category": "misc",
+  "ingredient": {
+    "tag": "c:cobblestones"
+  },
+  "result": {
+    "buckets": 0.25,
+    "fluid": "minecraft:lava"
+  },
+  "time": 3600
+}

@@ -1,12 +1,12 @@
 package com.jship.bushcraft.client.neoforge;
 
 import com.jship.bushcraft.Bushcraft;
-import com.jship.bushcraft.Bushcraft.ModBlockEntities;
-import com.jship.bushcraft.Bushcraft.ModMenus;
 import com.jship.bushcraft.client.renderer.DryingRackRenderer;
 import com.jship.bushcraft.client.renderer.HandPumpGeoRenderer;
 import com.jship.bushcraft.client.renderer.WasherGeoRenderer;
 import com.jship.bushcraft.client.screen.WasherScreen;
+import com.jship.bushcraft.init.ModBlockEntities;
+import com.jship.bushcraft.init.ModMenus;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;

@@ -2,8 +2,8 @@ package com.jship.bushcraft.block;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.jship.bushcraft.Bushcraft.ModBlockEntities;
 import com.jship.bushcraft.block.entity.WasherGeoBlockEntity;
+import com.jship.bushcraft.init.ModBlockEntities;
 import com.jship.spiritapi.api.fluid.SpiritFluidUtil;
 import com.mojang.serialization.MapCodec;
 
@@ -133,13 +133,4 @@ public class WasherBlock extends AbstractFurnaceBlock {
     protected MapCodec<? extends AbstractFurnaceBlock> codec() {
         return CODEC;
     }
-
-    // @Override
-    // protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-    //     val pump = level.getBlockEntity(pos, ModBlockEntities.HAND_PUMP.get());
-    //     if (pump.isPresent()) {
-    //         return pump.get().tryPumpFluid(state, level, pos, player);
-    //     }
-    //     return InteractionResult.PASS;
-    // }
 }

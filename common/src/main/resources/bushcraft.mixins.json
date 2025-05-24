@@ -5,7 +5,9 @@
   "minVersion": "0.8",
   "client": [],
   "mixins": [
-    "AbstractFurnaceBlockEntityAccessor"
+    "AbstractFurnaceBlockEntityAccessor",
+    "PistonMovingBlockEntityMixin",
+    "PistonStructureResolverMixin"
   ],
   "injectors": {
     "defaultRequire": 1

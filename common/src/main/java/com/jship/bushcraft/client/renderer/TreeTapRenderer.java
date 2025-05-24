@@ -15,9 +15,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
 
-public class TreeTapBlockEntityRenderer implements BlockEntityRenderer<TreeTapBlockEntity> {
+public class TreeTapRenderer implements BlockEntityRenderer<TreeTapBlockEntity> {
 
-    public TreeTapBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
+    public TreeTapRenderer(BlockEntityRendererProvider.Context context) {
     }
 
     @Override

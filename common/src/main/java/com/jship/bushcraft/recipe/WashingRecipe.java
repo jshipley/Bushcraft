@@ -1,7 +1,7 @@
 package com.jship.bushcraft.recipe;
 
-import com.jship.bushcraft.Bushcraft.ModBlocks;
-import com.jship.bushcraft.Bushcraft.ModRecipes;
+import com.jship.bushcraft.init.ModBlocks;
+import com.jship.bushcraft.init.ModRecipes;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;

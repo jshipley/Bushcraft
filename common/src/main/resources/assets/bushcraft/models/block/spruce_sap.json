@@ -1,6 +1,6 @@
 {
     "textures": {
-        "particle": "block/spruce_sap"
+        "particle": "bushcraft:block/sap"
     }
 }
 

@@ -2,7 +2,7 @@
   "type": "minecraft:smelting",
   "category": "misc",
   "cookingtime": 200,
-  "experience": 2.0,
+  "experience": 1.0,
   "ingredient": {
     "item": "bushcraft:spruce_sap_bucket"
   },

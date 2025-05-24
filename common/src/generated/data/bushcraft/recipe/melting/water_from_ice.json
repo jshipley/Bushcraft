@@ -1,0 +1,20 @@
+{
+  "type": "bushcraft:melting",
+  "category": "misc",
+  "ingredient": [
+    {
+      "item": "minecraft:ice"
+    },
+    {
+      "item": "minecraft:packed_ice"
+    },
+    {
+      "item": "minecraft:blue_ice"
+    }
+  ],
+  "result": {
+    "buckets": 1.0,
+    "fluid": "minecraft:water"
+  },
+  "time": 1200
+}

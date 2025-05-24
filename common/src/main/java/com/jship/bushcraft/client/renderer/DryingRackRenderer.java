@@ -30,7 +30,7 @@ public class DryingRackRenderer implements BlockEntityRenderer<DryingRackBlockEn
     }
 
     @Override
-    public void render(DryingRackBlockEntity dryingRackEntity, float f, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j) {
+    public void render(DryingRackBlockEntity dryingRackEntity, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, int packedOverlay) {
         Direction direction = dryingRackEntity.getBlockState().getValue(DryingRackBlock.FACING);
         NonNullList<ItemStack> itemList = dryingRackEntity.getItems();
         int pos = (int) dryingRackEntity.getBlockPos().asLong();
@@ -46,7 +46,7 @@ public class DryingRackRenderer implements BlockEntityRenderer<DryingRackBlockEn
                 poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
                 poseStack.translate(ITEM_RADIUS, ITEM_RADIUS, 0.0F);
                 poseStack.scale(SIZE, SIZE, SIZE);
-                itemRenderer.renderStatic(stack, ItemDisplayContext.FIXED, i, j, poseStack, multiBufferSource, dryingRackEntity.getLevel(), pos + index);
+                itemRenderer.renderStatic(stack, ItemDisplayContext.FIXED, packedLight, packedOverlay, poseStack, multiBufferSource, dryingRackEntity.getLevel(), pos + index);
                 poseStack.popPose();
             }
         }

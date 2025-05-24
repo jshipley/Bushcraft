@@ -1,0 +1,12 @@
+{
+  "type": "bushcraft:melting",
+  "category": "misc",
+  "ingredient": {
+    "tag": "c:obsidians"
+  },
+  "result": {
+    "buckets": 1.0,
+    "fluid": "minecraft:lava"
+  },
+  "time": 3600
+}

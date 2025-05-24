@@ -1,10 +1,15 @@
 package com.jship.bushcraft.block;
 
-import com.jship.bushcraft.Bushcraft.ModBlockEntities;
+import java.util.Optional;
+
+import org.jetbrains.annotations.Nullable;
+
 import com.jship.bushcraft.block.entity.DryingRackBlockEntity;
+import com.jship.bushcraft.init.ModBlockEntities;
 import com.jship.bushcraft.recipe.DryingRecipe;
 import com.mojang.serialization.MapCodec;
-import java.util.Optional;
+
+import lombok.val;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
@@ -43,13 +48,17 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.Nullable;
 
 public class DryingRackBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
 
     public static final MapCodec<DryingRackBlock> CODEC = simpleCodec(DryingRackBlock::new);
 
-    private static final VoxelShape SHAPE = Shapes.or(Shapes.box(0, 0, 0, 0.25, 0.5, 0.25), Shapes.box(0.75, 0, 0, 1, 0.5, 0.25), Shapes.box(0, 0, 0.75, 0.25, 0.5, 1), Shapes.box(0.75, 0, 0.75, 1, 0.5, 1), Shapes.box(0, 0.5, 0, 1, 0.625, 1));
+    private static final VoxelShape SHAPE = Shapes.or(
+        Shapes.box(0, 0, 0, 0.25, 0.5, 0.25),
+        Shapes.box(0.75, 0, 0, 1, 0.5, 0.25),
+        Shapes.box(0, 0, 0.75, 0.25, 0.5, 1),
+        Shapes.box(0.75, 0, 0.75, 1, 0.5, 1),
+        Shapes.box(0, 0.5, 0, 1, 0.625, 1));
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
@@ -132,8 +141,7 @@ public class DryingRackBlock extends BaseEntityBlock implements SimpleWaterlogge
         if (blockEntity instanceof DryingRackBlockEntity dryingRackEntity && !player.isCrouching()) {
             if (dryingRackEntity.hasFinishedStacks()) {
                 if (!level.isClientSide) {
-                    dryingRackEntity.dropFinishedStacks(level, blockPos, player);
-                    // player.awardStat(ModStats.INTERACT_WITH_DRYING_RACK.get());
+                    dryingRackEntity.dropFinishedStacks();
                     return InteractionResult.SUCCESS;
                 }
                 return InteractionResult.CONSUME;
@@ -142,7 +150,6 @@ public class DryingRackBlock extends BaseEntityBlock implements SimpleWaterlogge
                     ItemStack removedItem = dryingRackEntity.removeUnfinishedItem();
                     if (!removedItem.isEmpty() && !player.hasInfiniteMaterials())
                         player.addItem(removedItem);
-                    // player.awardStat(ModStats.INTERACT_WITH_DRYING_RACK.get());
                     return InteractionResult.SUCCESS;
                 }
                 return InteractionResult.CONSUME;
@@ -158,8 +165,7 @@ public class DryingRackBlock extends BaseEntityBlock implements SimpleWaterlogge
             // Eject finished stacks
             if (dryingRackEntity.hasFinishedStacks()) {
                 if (!level.isClientSide) {
-                    dryingRackEntity.dropFinishedStacks(level, blockPos, player);
-                    // player.awardStat(ModStats.INTERACT_WITH_DRYING_RACK.get());
+                    dryingRackEntity.dropFinishedStacks();
                     return ItemInteractionResult.SUCCESS;
                 }
                 return ItemInteractionResult.CONSUME;
@@ -172,7 +178,6 @@ public class DryingRackBlock extends BaseEntityBlock implements SimpleWaterlogge
                 if (!level.isClientSide && dryingRackEntity.placeItem(player, handStack, recipe.get().value().time())) {
                     SoundEvent sound = handStack.getItem() instanceof BlockItem blockItem ? blockItem.getBlock().defaultBlockState().getSoundType().getPlaceSound() : SoundEvents.SALMON_FLOP;
                     level.playSound(null, blockPos, sound, SoundSource.BLOCKS, 1.0F, 1.0F);
-                    // player.awardStat(ModStats.INTERACT_WITH_DRYING_RACK.get());
                     return ItemInteractionResult.SUCCESS;
                 }
 
@@ -186,9 +191,9 @@ public class DryingRackBlock extends BaseEntityBlock implements SimpleWaterlogge
     @Override
     protected void onRemove(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
         if (!blockState.is(blockState2.getBlock())) {
-            BlockEntity blockEntity = level.getBlockEntity(blockPos);
-            if (blockEntity instanceof DryingRackBlockEntity dryingRackEntity) {
-                Containers.dropContents(level, blockPos, dryingRackEntity.getItems());
+            val dryingRackEntity = level.getBlockEntity(blockPos, ModBlockEntities.DRYING_RACK.get());
+            if (dryingRackEntity.isPresent()) {
+                Containers.dropContents(level, blockPos, dryingRackEntity.get().getItems());
             }
 
             super.onRemove(blockState, level, blockPos, blockState2, bl);

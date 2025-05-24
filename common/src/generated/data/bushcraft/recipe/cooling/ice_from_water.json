@@ -1,0 +1,13 @@
+{
+  "type": "bushcraft:cooling",
+  "category": "misc",
+  "input": {
+    "buckets": 1.0,
+    "fluid": "minecraft:water"
+  },
+  "result": {
+    "count": 1,
+    "id": "minecraft:ice"
+  },
+  "time": 1800
+}

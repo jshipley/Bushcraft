@@ -1,18 +1,21 @@
 package com.jship.bushcraft.compat.jade;
 
-import com.google.common.collect.Lists;
-import com.jship.bushcraft.Bushcraft;
-import com.jship.bushcraft.block.entity.DryingRackBlockEntity;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import java.util.List;
 import java.util.Optional;
+
+import org.jetbrains.annotations.Nullable;
+
+import com.google.common.collect.Lists;
+import com.jship.bushcraft.block.entity.DryingRackBlockEntity;
+import com.jship.bushcraft.init.ModBlocks;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
-import org.jetbrains.annotations.Nullable;
 import snownee.jade.api.Accessor;
 import snownee.jade.api.theme.IThemeHelper;
 import snownee.jade.api.view.ClientViewGroup;
@@ -28,7 +31,7 @@ public enum BushcraftDryingRackProvider implements IServerExtensionProvider<Item
 
     @Override
     public ResourceLocation getUid() {
-        return Bushcraft.ModBlocks.DRYING_RACK.getId();
+        return ModBlocks.DRYING_RACK.getId();
     }
 
     @Override

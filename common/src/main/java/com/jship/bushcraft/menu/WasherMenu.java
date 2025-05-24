@@ -1,7 +1,7 @@
 package com.jship.bushcraft.menu;
 
-import com.jship.bushcraft.Bushcraft.ModMenus;
-import com.jship.bushcraft.Bushcraft.ModRecipes;
+import com.jship.bushcraft.init.ModMenus;
+import com.jship.bushcraft.init.ModRecipes;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
