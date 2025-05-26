@@ -56,6 +56,11 @@ dependencies {
     // REI
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${rootProject.rei_version}"
     // modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_version}"
+
+    // for testing
+    modRuntimeOnly "curse.maven:cloth-config-348521:5729125"
+    modRuntimeOnly "curse.maven:brick-hopper-442574:5814820"
+    modRuntimeOnly "curse.maven:copper-hopper-575851:5691439"
 }
 
 loom {
@@ -86,4 +91,47 @@ shadowJar {
 
 remapJar {
     inputFile.set shadowJar.archiveFile
+}
+
+publishMods {
+    file = remapJar.archiveFile
+    changelog = file("../CHANGELOG.md").getText()
+    type = ALPHA
+    modLoaders.add("fabric")
+
+    modrinth {
+        projectId = "7PiPxkvx"
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+
+        minecraftVersions.add("${minecraft_version}")
+
+        requires("architectury-api")
+        requires("geckolib")
+        embeds("spirit-api")
+        optional("emi")
+        optional("rei")
+        optional("jei")
+        optional("jade")
+
+        announcementTitle = "Fabric version on Modrinth"
+    }
+
+    curseforge {
+        projectId = "1272246"
+        projectSlug = "haunt-furnace"
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+
+        minecraftVersions.add("${minecraft_version}")
+        javaVersions.add(JavaVersion.VERSION_21)
+
+        requires("architectury-api")
+        requires("geckolib")
+        embeds("spirit-api")
+        optional("emi")
+        optional("roughly-enough-items")
+        optional("jei")
+        optional("jade")
+
+        announcementTitle = "Fabric version on Curseforge"
+    }
 }

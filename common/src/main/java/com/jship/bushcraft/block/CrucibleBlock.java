@@ -98,9 +98,10 @@ public class CrucibleBlock extends BaseEntityBlock {
             BlockHitResult hitResult) {
         val crucibleEntity = level.getBlockEntity(pos, ModBlockEntities.CRUCIBLE.get());
         if (crucibleEntity.isPresent()) {
-            if (crucibleEntity.get().getItems().stream().anyMatch(item -> !item.isEmpty())) {
+            if (!crucibleEntity.get().getItemStorage(null).getStackInSlot(0).isEmpty()) {
                 if (!level.isClientSide()) {
                     crucibleEntity.get().dropContents();
+                    return InteractionResult.SUCCESS;
                 }
                 return InteractionResult.CONSUME;
             }
@@ -118,7 +119,7 @@ public class CrucibleBlock extends BaseEntityBlock {
                     return ItemInteractionResult.CONSUME;
                 if (SpiritFluidUtil.fillItem(crucibleEntity.get().getFluidStorage(null), player, hand, false)) {
                     return ItemInteractionResult.SUCCESS;
-                } else if (crucibleEntity.get().getItem(0).isEmpty()
+                } else if (crucibleEntity.get().getItemStorage(null).getStackInSlot(0).isEmpty()
                         && SpiritFluidUtil.drainItem(crucibleEntity.get().getFluidStorage(null), player, hand, false)) {
                     return ItemInteractionResult.SUCCESS;
                 }

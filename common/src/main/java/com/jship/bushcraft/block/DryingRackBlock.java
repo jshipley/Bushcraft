@@ -1,15 +1,13 @@
 package com.jship.bushcraft.block;
 
-import java.util.Optional;
-
 import org.jetbrains.annotations.Nullable;
 
 import com.jship.bushcraft.block.entity.DryingRackBlockEntity;
 import com.jship.bushcraft.init.ModBlockEntities;
-import com.jship.bushcraft.recipe.DryingRecipe;
 import com.mojang.serialization.MapCodec;
 
 import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
@@ -24,7 +22,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -49,6 +46,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+@Slf4j
 public class DryingRackBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
 
     public static final MapCodec<DryingRackBlock> CODEC = simpleCodec(DryingRackBlock::new);
@@ -137,22 +135,24 @@ public class DryingRackBlock extends BaseEntityBlock implements SimpleWaterlogge
     }
 
     protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult) {
-        BlockEntity blockEntity = level.getBlockEntity(blockPos);
-        if (blockEntity instanceof DryingRackBlockEntity dryingRackEntity && !player.isCrouching()) {
-            if (dryingRackEntity.hasFinishedStacks()) {
+        val dryingRackEntity = level.getBlockEntity(blockPos, ModBlockEntities.DRYING_RACK.get());
+
+        if (dryingRackEntity.isPresent() && !player.isCrouching()) {
+            // Remove finished stacks
+            if (dryingRackEntity.get().hasFinishedStacks()) {
                 if (!level.isClientSide) {
-                    dryingRackEntity.dropFinishedStacks();
+                    dryingRackEntity.get().dropFinishedStacks();
                     return InteractionResult.SUCCESS;
                 }
                 return InteractionResult.CONSUME;
-            } else if (dryingRackEntity.hasUnfinishedItem() && player.getMainHandItem().isEmpty()) {
-                if (!level.isClientSide) {
-                    ItemStack removedItem = dryingRackEntity.removeUnfinishedItem();
-                    if (!removedItem.isEmpty() && !player.hasInfiniteMaterials())
-                        player.addItem(removedItem);
-                    return InteractionResult.SUCCESS;
-                }
-                return InteractionResult.CONSUME;
+            // Remove unfinished stacks
+            } else if (dryingRackEntity.get().hasUnfinishedItem() && player.getMainHandItem().isEmpty()) {
+                if (level.isClientSide())
+                    return InteractionResult.CONSUME;
+                ItemStack removedItem = dryingRackEntity.get().removeUnfinishedItem();
+                if (!removedItem.isEmpty() && !player.hasInfiniteMaterials())
+                    player.addItem(removedItem);
+                return InteractionResult.SUCCESS;
             }
         }
         return InteractionResult.PASS;
@@ -160,28 +160,19 @@ public class DryingRackBlock extends BaseEntityBlock implements SimpleWaterlogge
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
-        BlockEntity blockEntity = level.getBlockEntity(blockPos);
-        if (blockEntity instanceof DryingRackBlockEntity dryingRackEntity && !player.isCrouching()) {
-            // Eject finished stacks
-            if (dryingRackEntity.hasFinishedStacks()) {
-                if (!level.isClientSide) {
-                    dryingRackEntity.dropFinishedStacks();
-                    return ItemInteractionResult.SUCCESS;
-                }
-                return ItemInteractionResult.CONSUME;
-            }
-
-            // Otherwise try to add new stacks
+        val dryingRackEntity = level.getBlockEntity(blockPos, ModBlockEntities.DRYING_RACK.get());
+        if (dryingRackEntity.isPresent() && !player.isCrouching()) {
+            // Try to add new stacks
             ItemStack handStack = player.getItemInHand(interactionHand);
-            Optional<RecipeHolder<DryingRecipe>> recipe = dryingRackEntity.getRecipe(handStack);
-            if (recipe.isPresent()) {
-                if (!level.isClientSide && dryingRackEntity.placeItem(player, handStack, recipe.get().value().time())) {
-                    SoundEvent sound = handStack.getItem() instanceof BlockItem blockItem ? blockItem.getBlock().defaultBlockState().getSoundType().getPlaceSound() : SoundEvents.SALMON_FLOP;
-                    level.playSound(null, blockPos, sound, SoundSource.BLOCKS, 1.0F, 1.0F);
-                    return ItemInteractionResult.SUCCESS;
-                }
-
+            // why was this even getting called with an empty hand 🫤
+            if (handStack.isEmpty())
+                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            if (level.isClientSide())
                 return ItemInteractionResult.CONSUME;
+            if (dryingRackEntity.get().placeItem(player, handStack)) {
+                SoundEvent sound = handStack.getItem() instanceof BlockItem blockItem ? blockItem.getBlock().defaultBlockState().getSoundType().getPlaceSound() : SoundEvents.SALMON_FLOP;
+                level.playSound(null, blockPos, sound, SoundSource.BLOCKS, 1.0F, 1.0F);
+                return ItemInteractionResult.SUCCESS;
             }
         }
 
@@ -189,14 +180,19 @@ public class DryingRackBlock extends BaseEntityBlock implements SimpleWaterlogge
     }
 
     @Override
-    protected void onRemove(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
-        if (!blockState.is(blockState2.getBlock())) {
-            val dryingRackEntity = level.getBlockEntity(blockPos, ModBlockEntities.DRYING_RACK.get());
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState state2, boolean bl) {
+        if (!state.is(state2.getBlock())) {
+            val dryingRackEntity = level.getBlockEntity(pos, ModBlockEntities.DRYING_RACK.get());
             if (dryingRackEntity.isPresent()) {
-                Containers.dropContents(level, blockPos, dryingRackEntity.get().getItems());
+                val itemStorage = dryingRackEntity.get().getItemStorage(null);
+                for (int i = 0; i < itemStorage.getSlots(); i++) {
+                    val stack = itemStorage.getStackInSlot(i);
+                    if (!stack.isEmpty())
+                        Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
+                }
             }
 
-            super.onRemove(blockState, level, blockPos, blockState2, bl);
+            super.onRemove(state, level, pos, state2, bl);
         }
     }
 }

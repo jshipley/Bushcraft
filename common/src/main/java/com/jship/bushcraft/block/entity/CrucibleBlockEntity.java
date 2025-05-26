@@ -1,17 +1,18 @@
 package com.jship.bushcraft.block.entity;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
 import com.jship.bushcraft.init.ModBlockEntities;
 import com.jship.bushcraft.init.ModRecipes;
 import com.jship.bushcraft.init.ModTags.ModBlockTags;
-import com.jship.bushcraft.recipe.CoolingRecipe;
-import com.jship.bushcraft.recipe.FluidStackRecipeInput;
 import com.jship.bushcraft.recipe.MeltingRecipe;
 import com.jship.spiritapi.api.fluid.SpiritFluidStorage;
 import com.jship.spiritapi.api.fluid.SpiritFluidStorageProvider;
+import com.jship.spiritapi.api.item.SpiritItemStorage;
+import com.jship.spiritapi.api.item.SpiritItemStorage.SlotConfig;
+import com.jship.spiritapi.api.item.SpiritItemStorageProvider;
 
 import dev.architectury.fluid.FluidStack;
 import lombok.AllArgsConstructor;
@@ -21,19 +22,11 @@ import lombok.experimental.Accessors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.Container;
-import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
-import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
@@ -42,11 +35,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.GameEvent.Context;
 
-public class CrucibleBlockEntity extends BlockEntity implements WorldlyContainer, SpiritFluidStorageProvider {
+public class CrucibleBlockEntity extends BlockEntity implements SpiritFluidStorageProvider, SpiritItemStorageProvider {
 
-    private static final int SLOT_COUNT = 1;
-    private static final int[] SLOTS = { 0 };
-    private final NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
     public int workProgress = 0;
     public int workTime = 0;
     public int workRate = 0;
@@ -55,6 +45,10 @@ public class CrucibleBlockEntity extends BlockEntity implements WorldlyContainer
     public final SpiritFluidStorage fluidStorage = SpiritFluidStorage.create(FluidStack.bucketAmount(),
             FluidStack.bucketAmount(),
             this::markUpdated);
+    public final SpiritItemStorage itemStorage = SpiritItemStorage
+            .create(List.of(new SlotConfig(true, true, 1,
+                    stack -> fluidStorage.getFluidInTank(0).getAmount() < fluidStorage.getTankCapacity(0))),
+                    this::markUpdated);
 
     private static final RecipeManager.CachedCheck<SingleRecipeInput, MeltingRecipe> meltQuickCheck = RecipeManager
             .createCheck(ModRecipes.MELTING.get());
@@ -86,7 +80,7 @@ public class CrucibleBlockEntity extends BlockEntity implements WorldlyContainer
     }
 
     private static void meltTick(Level level, BlockPos pos, BlockState state, CrucibleBlockEntity crucibleEntity) {
-        val stack = crucibleEntity.items.get(0);
+        val stack = crucibleEntity.itemStorage.getStackInSlot(0);
         // no item or full tank
         if (stack.isEmpty() || crucibleEntity.fluidStorage.getFluidInTank(0).getAmount() >= crucibleEntity.fluidStorage
                 .getTankCapacity(0)) {
@@ -105,7 +99,7 @@ public class CrucibleBlockEntity extends BlockEntity implements WorldlyContainer
                 val inserted = crucibleEntity.fluidStorage.fill(fluidStack, true);
                 if (inserted == fluidStack.getAmount()) {
                     crucibleEntity.fluidStorage.fill(fluidStack, false);
-                    crucibleEntity.items.set(0, ItemStack.EMPTY);
+                    crucibleEntity.itemStorage.extractItem(0, 1, false);
                     crucibleEntity.resetProgress();
                     level.gameEvent(GameEvent.BLOCK_CHANGE, pos, Context.of(state));
                     crucibleEntity.markUpdated();
@@ -117,15 +111,17 @@ public class CrucibleBlockEntity extends BlockEntity implements WorldlyContainer
     private static void coolTick(Level level, BlockPos pos, BlockState state, CrucibleBlockEntity crucibleEntity) {
         val fluidStack = crucibleEntity.fluidStorage.getFluidInTank(0);
         // no fluid or item slot not empty
-        if (fluidStack.isEmpty() || !crucibleEntity.getItem(0).isEmpty()) {
+        if (fluidStack.isEmpty() || !crucibleEntity.itemStorage.getStackInSlot(0).isEmpty()) {
             crucibleEntity.resetProgress();
             return;
         }
 
-        val recipeHolder = level.getRecipeManager().getAllRecipesFor(ModRecipes.COOLING.get()).stream().filter(holder -> {
-            val recipeFluidStack = holder.value().input();
-            return fluidStack.getAmount() >= recipeFluidStack.getAmount() && fluidStack.isFluidEqual(recipeFluidStack);
-        }).findFirst();
+        val recipeHolder = level.getRecipeManager().getAllRecipesFor(ModRecipes.COOLING.get()).stream()
+                .filter(holder -> {
+                    val recipeFluidStack = holder.value().input();
+                    return fluidStack.getAmount() >= recipeFluidStack.getAmount()
+                            && fluidStack.isFluidEqual(recipeFluidStack);
+                }).findFirst();
         if (recipeHolder.isPresent()) {
             crucibleEntity.workTime = recipeHolder.get().value().time();
             crucibleEntity.workProgress = Math.min(
@@ -137,7 +133,7 @@ public class CrucibleBlockEntity extends BlockEntity implements WorldlyContainer
                 val drained = crucibleEntity.fluidStorage.drain(recipeFluidStack, true);
                 if (drained.isFluidStackEqual(recipeFluidStack)) {
                     crucibleEntity.fluidStorage.drain(recipeFluidStack, false);
-                    crucibleEntity.items.set(0, stack);
+                    crucibleEntity.itemStorage.insertItem(0, stack, false);
                     crucibleEntity.resetProgress();
                     level.gameEvent(GameEvent.BLOCK_CHANGE, pos, Context.of(state));
                     crucibleEntity.markUpdated();
@@ -180,9 +176,9 @@ public class CrucibleBlockEntity extends BlockEntity implements WorldlyContainer
 
     protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider lookupProvider) {
         super.loadAdditional(compoundTag, lookupProvider);
-        clearContent();
-        ContainerHelper.loadAllItems(compoundTag, items, lookupProvider);
         fluidStorage.deserializeNbt(lookupProvider, compoundTag);
+        if (compoundTag.contains("Items"))
+            this.itemStorage.deserializeNbt(lookupProvider, compoundTag);
         if (compoundTag.contains("WorkTime")) {
             this.workProgress = compoundTag.getInt("WorkTime");
         }
@@ -190,19 +186,9 @@ public class CrucibleBlockEntity extends BlockEntity implements WorldlyContainer
 
     protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider lookupProvider) {
         super.saveAdditional(compoundTag, lookupProvider);
-        ContainerHelper.saveAllItems(compoundTag, items, true, lookupProvider);
         compoundTag.merge(fluidStorage.serializeNbt(lookupProvider));
+        compoundTag.merge(itemStorage.serializeNbt(lookupProvider));
         compoundTag.putInt("WorkTime", workProgress);
-    }
-
-    protected void applyImplicitComponents(BlockEntity.DataComponentInput dataComponentInput) {
-        super.applyImplicitComponents(dataComponentInput);
-        dataComponentInput.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(items);
-    }
-
-    protected void collectImplicitComponents(DataComponentMap.Builder builder) {
-        super.collectImplicitComponents(builder);
-        builder.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(items));
     }
 
     @Override
@@ -213,119 +199,36 @@ public class CrucibleBlockEntity extends BlockEntity implements WorldlyContainer
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider lookupProvider) {
         CompoundTag compoundTag = new CompoundTag();
-        ContainerHelper.saveAllItems(compoundTag, items, true, lookupProvider);
         compoundTag.merge(fluidStorage.serializeNbt(lookupProvider));
+        compoundTag.merge(this.itemStorage.serializeNbt(lookupProvider));
         return compoundTag;
-    }
-
-    public void removeComponentsFromTag(CompoundTag compoundTag) {
-        compoundTag.remove("Items");
-    }
-
-    @Override
-    public void clearContent() {
-        this.items.clear();
-    }
-
-    @Override
-    public int getContainerSize() {
-        return items.size();
-    }
-
-    @Override
-    public ItemStack getItem(int i) {
-        return items.get(i);
-    }
-
-    public NonNullList<ItemStack> getItems() {
-        return items;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return items.stream().allMatch(ItemStack::isEmpty);
-    }
-
-    @Override
-    public ItemStack removeItem(int slot, int count) {
-        ItemStack removedStack = ContainerHelper.removeItem(items, slot, count);
-        markUpdated();
-        return removedStack;
     }
 
     public void dropContents() {
         var stacksDropped = false;
-        for (var i = 0; i < SLOT_COUNT; i++) {
-            val stack = items.get(i);
-            if (!stack.isEmpty()) {
-                val pos = this.getBlockPos();
-                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
-                items.set(i, ItemStack.EMPTY);
-                stacksDropped = true;
-            }
+        val stack = this.itemStorage.getStackInSlot(0);
+        if (!stack.isEmpty()) {
+            val pos = this.getBlockPos();
+            Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
+            this.itemStorage.extractItem(0, 1, false);
+            stacksDropped = true;
         }
 
         if (stacksDropped)
             markUpdated();
     }
 
-    @Override
-    public ItemStack removeItemNoUpdate(int slot) {
-        return ContainerHelper.takeItem(items, slot);
-    }
-
-    @Override
-    public void setItem(int slot, ItemStack stack) {
-        if (slot > 0)
-            throw new IllegalArgumentException();
-
-        if (!items.get(slot).isEmpty())
-            return;
-
-        items.set(slot, stack);
-    }
-
     public boolean placeItem(@Nullable LivingEntity livingEntity, ItemStack stack) {
-        if (canPlaceItem(0, stack)) {
+        val updatedStack = itemStorage.insertItem(0, stack.copy(), true);
+        if (updatedStack.getCount() < stack.getCount()) {
             resetProgress();
-            items.set(0, stack.consumeAndReturn(1, livingEntity));
+            val playerStack = livingEntity != null && livingEntity.hasInfiniteMaterials() ? stack.copy() : stack;
+            itemStorage.insertItem(0, playerStack, false);
             this.level.gameEvent(GameEvent.BLOCK_CHANGE, getBlockPos(), Context.of(livingEntity, getBlockState()));
-            markUpdated();
             return true;
         }
 
         return false;
-    }
-
-    @Override
-    public boolean stillValid(Player player) {
-        return Container.stillValidBlockEntity(this, player);
-    }
-
-    @Override
-    public boolean canPlaceItem(int slot, ItemStack stack) {
-        return items.get(slot).isEmpty()
-                && fluidStorage.getFluidInTank(0).getAmount() < fluidStorage.getTankCapacity(0);
-    }
-
-    @Override
-    public boolean canPlaceItemThroughFace(int slot, ItemStack stack, Direction direction) {
-        return canPlaceItem(slot, stack);
-    }
-
-    @Override
-    public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction direction) {
-        return canPlaceItem(0, stack);
-    }
-
-    @Override
-    public int[] getSlotsForFace(Direction direction) {
-        return SLOTS;
-    }
-
-    @Override
-    public SpiritFluidStorage getFluidStorage(Direction face) {
-        return fluidStorage;
     }
 
     private void markUpdated() {
@@ -355,5 +258,15 @@ public class CrucibleBlockEntity extends BlockEntity implements WorldlyContainer
                     throw new IllegalArgumentException();
             }
         }
+    }
+
+    @Override
+    public @Nullable SpiritItemStorage getItemStorage(Direction face) {
+        return itemStorage;
+    }
+
+    @Override
+    public @Nullable SpiritFluidStorage getFluidStorage(Direction face) {
+        return fluidStorage;
     }
 }

@@ -125,6 +125,7 @@ public class BushcraftRecipeProvider extends FabricRecipeProvider {
         offerCooling(output, "obsidian_from_lava", CoolingRecipe.builder().input(Fluids.LAVA, FluidStack.bucketAmount()).result(Items.OBSIDIAN).build());
         offerCooling(output, "ice_from_water", CoolingRecipe.builder().input(Fluids.WATER, FluidStack.bucketAmount()).result(Items.ICE).time(1800).build());
 
+        offerMelting(output, "lava_from_netherrack", MeltingRecipe.builder().ingredient(Items.NETHERRACK).result(Fluids.LAVA, FluidStack.bucketAmount() / 4).time(2400).build());
         offerMelting(output, "lava_from_gravels", MeltingRecipe.builder().ingredient(ConventionalItemTags.GRAVELS).result(Fluids.LAVA, FluidStack.bucketAmount() / 4).time(2400).build());
         offerMelting(output, "lava_from_stones", MeltingRecipe.builder().ingredient(ConventionalItemTags.STONES).result(Fluids.LAVA, FluidStack.bucketAmount() / 4).build());
         offerMelting(output, "lava_from_cobblestones", MeltingRecipe.builder().ingredient(ConventionalItemTags.COBBLESTONES).result(Fluids.LAVA, FluidStack.bucketAmount() / 4).build());

@@ -60,7 +60,7 @@ public enum BushcraftDryingRackProvider implements IServerExtensionProvider<Item
         if (accessor.getTarget() instanceof DryingRackBlockEntity dryingRack) {
             List<ItemStack> list = Lists.newArrayList();
             for (int i = 0; i < dryingRack.dryingTime.length; i++) {
-                ItemStack stack = dryingRack.getItems().get(i);
+                ItemStack stack = dryingRack.getItemStorage(null).getStackInSlot(i);
                 if (stack.isEmpty()) {
                     continue;
                 }

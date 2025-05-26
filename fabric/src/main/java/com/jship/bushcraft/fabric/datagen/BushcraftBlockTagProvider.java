@@ -2,7 +2,6 @@ package com.jship.bushcraft.fabric.datagen;
 
 import java.util.concurrent.CompletableFuture;
 
-import com.jship.bushcraft.Bushcraft;
 import com.jship.bushcraft.init.ModBlocks;
 import com.jship.bushcraft.init.ModTags.ModBlockTags;
 
@@ -15,7 +14,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
@@ -27,6 +25,10 @@ public class BushcraftBlockTagProvider extends FabricTagProvider.BlockTagProvide
 
     @Override
     protected void addTags(HolderLookup.Provider lookupProvider) {
+        getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_AXE)
+            .add(ModBlocks.DRYING_RACK.get(), ModBlocks.HAND_PUMP.get(), ModBlocks.TREE_TAP.get());
+        getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_PICKAXE)
+            .add(ModBlocks.CRUCIBLE.get(), ModBlocks.FLINT_BLOCK.get(), ModBlocks.WASHER.get());
         getOrCreateTagBuilder(BlockTags.INFINIBURN_OVERWORLD)
             .add(ModBlocks.SPRUCE_SAP_SOURCE.get())
             .add(ModBlocks.PITCH_BLOCK.get());

@@ -41,7 +41,7 @@ public class CrucibleRenderer implements BlockEntityRenderer<CrucibleBlockEntity
             return;
         }
 
-        val stack = crucibleEntity.getItem(0);
+        val stack = crucibleEntity.getItemStorage(null).getStackInSlot(0);
         val pos = (int)crucibleEntity.getBlockPos().asLong();
 
         if (!stack.isEmpty()) {

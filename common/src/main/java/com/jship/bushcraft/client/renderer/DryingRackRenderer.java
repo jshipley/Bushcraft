@@ -4,6 +4,7 @@ import com.jship.bushcraft.block.DryingRackBlock;
 import com.jship.bushcraft.block.entity.DryingRackBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -11,7 +12,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -32,11 +32,10 @@ public class DryingRackRenderer implements BlockEntityRenderer<DryingRackBlockEn
     @Override
     public void render(DryingRackBlockEntity dryingRackEntity, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, int packedOverlay) {
         Direction direction = dryingRackEntity.getBlockState().getValue(DryingRackBlock.FACING);
-        NonNullList<ItemStack> itemList = dryingRackEntity.getItems();
         int pos = (int) dryingRackEntity.getBlockPos().asLong();
 
-        for (int index = 0; index < itemList.size(); index++) {
-            ItemStack stack = itemList.get(index);
+        for (int index = 0; index < dryingRackEntity.getItemStorage(null).getSlots(); index++) {
+            ItemStack stack = dryingRackEntity.getItemStorage(null).getStackInSlot(index);
             if (!stack.isEmpty()) {
                 poseStack.pushPose();
                 poseStack.translate(0.5F, stack.getItem() instanceof BlockItem ? BLOCK_ITEM_HEIGHT : ITEM_HEIGHT, 0.5F);

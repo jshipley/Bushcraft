@@ -31,7 +31,7 @@ This is an alpha release. There are no major known issues, but this is an early 
 * Fluids are not rendering in REI displays
 
 # Supported mods
-* EMI/JEI supported, REI partially supported
+* EMI/JEI/REI supported
 * Jade supported
 
 # Supported versions

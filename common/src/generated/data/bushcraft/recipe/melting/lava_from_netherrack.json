@@ -1,0 +1,12 @@
+{
+  "type": "bushcraft:melting",
+  "category": "misc",
+  "ingredient": {
+    "item": "minecraft:netherrack"
+  },
+  "result": {
+    "buckets": 0.25,
+    "fluid": "minecraft:lava"
+  },
+  "time": 2400
+}

@@ -52,7 +52,7 @@ public class ModItems {
                                         new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)
                                                         .arch$tab(CreativeModeTabs.FUNCTIONAL_BLOCKS)));
         public static final RegistrySupplier<Item> SYRUP_BUCKET = ITEMS.register(Bushcraft.id("syrup_bucket"),
-                        () -> new Item(new Item.Properties().stacksTo(1).arch$tab(CreativeModeTabs.FOOD_AND_DRINKS)));
+                        () -> new Item(new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).arch$tab(CreativeModeTabs.FOOD_AND_DRINKS)));
 
         public static final RegistrySupplier<Item> FLINT_AXE = ITEMS.register(Bushcraft.id("flint_axe"),
                         () -> new AxeItem(ModTiers.FLINT,
