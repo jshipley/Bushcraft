@@ -1,0 +1,13 @@
+{
+  "type": "bushcraft:chipping",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.03,
+  "ingredient": {
+    "tag": "c:rods/wooden"
+  },
+  "result": {
+    "count": 1,
+    "id": "bushcraft:mulch"
+  }
+}

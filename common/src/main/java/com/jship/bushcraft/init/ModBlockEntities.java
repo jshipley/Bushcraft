@@ -1,6 +1,7 @@
 package com.jship.bushcraft.init;
 
 import com.jship.bushcraft.Bushcraft;
+import com.jship.bushcraft.block.entity.ChipperGeoBlockEntity;
 import com.jship.bushcraft.block.entity.CopperBellBlockEntity;
 import com.jship.bushcraft.block.entity.CrucibleBlockEntity;
 import com.jship.bushcraft.block.entity.DryingRackBlockEntity;
@@ -17,6 +18,9 @@ public class ModBlockEntities {
     public static final Registrar<BlockEntityType<?>> BLOCK_ENTITY_TYPES = Bushcraft.MANAGER.get()
             .get(Registries.BLOCK_ENTITY_TYPE);
 
+    public static final RegistrySupplier<BlockEntityType<ChipperGeoBlockEntity>> CHIPPER = BLOCK_ENTITY_TYPES
+            .register(Bushcraft.id("chipper"), () -> BlockEntityType.Builder
+                    .of(ChipperGeoBlockEntity::new, ModBlocks.CHIPPER.get()).build(null));
     public static final RegistrySupplier<BlockEntityType<CopperBellBlockEntity>> COPPER_BELL = BLOCK_ENTITY_TYPES
             .register(Bushcraft.id("copper_bell"), () -> BlockEntityType.Builder
                     .of(CopperBellBlockEntity::new, ModBlocks.COPPER_BELL.get()).build(null));

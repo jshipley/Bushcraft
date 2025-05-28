@@ -1,6 +1,7 @@
 package com.jship.bushcraft.init;
 
 import com.jship.bushcraft.Bushcraft;
+import com.jship.bushcraft.menu.ChipperMenu;
 import com.jship.bushcraft.menu.WasherMenu;
 
 import dev.architectury.registry.registries.Registrar;
@@ -12,6 +13,11 @@ import net.minecraft.world.inventory.MenuType;
 public class ModMenus {
         public static final Registrar<MenuType<?>> MENUS = Bushcraft.MANAGER.get().get(Registries.MENU);
 
+        public static RegistrySupplier<MenuType<ChipperMenu>> CHIPPER = MENUS.register(
+                Bushcraft.id("chipper"),
+                () -> new MenuType<ChipperMenu>(
+                        ChipperMenu::new,
+                        FeatureFlags.VANILLA_SET));
         public static RegistrySupplier<MenuType<WasherMenu>> WASHER = MENUS.register(
                 Bushcraft.id("washer"),
                 () -> new MenuType<WasherMenu>(

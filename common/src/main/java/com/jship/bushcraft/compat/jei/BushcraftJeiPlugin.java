@@ -3,12 +3,14 @@ package com.jship.bushcraft.compat.jei;
 import java.util.stream.Collectors;
 
 import com.jship.bushcraft.Bushcraft;
+import com.jship.bushcraft.compat.jei.category.BushcraftJeiChippingCategory;
 import com.jship.bushcraft.compat.jei.category.BushcraftJeiCoolingCategory;
 import com.jship.bushcraft.compat.jei.category.BushcraftJeiDryingCategory;
 import com.jship.bushcraft.compat.jei.category.BushcraftJeiMeltingCategory;
 import com.jship.bushcraft.compat.jei.category.BushcraftJeiWashingCategory;
 import com.jship.bushcraft.init.ModBlocks;
 import com.jship.bushcraft.init.ModRecipes;
+import com.jship.bushcraft.recipe.ChippingRecipe;
 import com.jship.bushcraft.recipe.CoolingRecipe;
 import com.jship.bushcraft.recipe.DryingRecipe;
 import com.jship.bushcraft.recipe.MeltingRecipe;
@@ -31,6 +33,7 @@ import net.minecraft.world.item.ItemStack;
 public class BushcraftJeiPlugin implements IModPlugin {
 
     public static final ResourceLocation ID = Bushcraft.id("jei_plugin");
+    public static final RecipeType<ChippingRecipe> CHIPPING_RECIPE = RecipeType.create(Bushcraft.MOD_ID, "chipping", ChippingRecipe.class);
     public static final RecipeType<CoolingRecipe> COOLING_RECIPE = RecipeType.create(Bushcraft.MOD_ID, "cooling", CoolingRecipe.class);
     public static final RecipeType<DryingRecipe> DRYING_RECIPE = RecipeType.create(Bushcraft.MOD_ID, "drying", DryingRecipe.class);
     public static final RecipeType<MeltingRecipe> MELTING_RECIPE = RecipeType.create(Bushcraft.MOD_ID, "melting", MeltingRecipe.class);
@@ -45,6 +48,7 @@ public class BushcraftJeiPlugin implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration registration) {
         IJeiHelpers jeiHelpers = registration.getJeiHelpers();
         IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
+        registration.addRecipeCategories(new BushcraftJeiChippingCategory(guiHelper));
         registration.addRecipeCategories(new BushcraftJeiCoolingCategory(guiHelper));
         registration.addRecipeCategories(new BushcraftJeiDryingCategory(guiHelper));
         registration.addRecipeCategories(new BushcraftJeiMeltingCategory(guiHelper));
@@ -55,6 +59,10 @@ public class BushcraftJeiPlugin implements IModPlugin {
     public void registerRecipes(IRecipeRegistration registration) {
         val recipeManager = Minecraft.getInstance().level.getRecipeManager();
         
+        val chippingRecipeHolders = recipeManager.getAllRecipesFor(ModRecipes.CHIPPING.get());
+        registration.addRecipes(CHIPPING_RECIPE, chippingRecipeHolders.stream().map(r -> r.value()).collect(Collectors.toList()));
+        Bushcraft.LOGGER.info("[Bushcraft] Registered chipping recipes: {}", chippingRecipeHolders.size());
+
         val coolingRecipeHolders = recipeManager.getAllRecipesFor(ModRecipes.COOLING.get());
         registration.addRecipes(COOLING_RECIPE, coolingRecipeHolders.stream().map(r -> r.value()).collect(Collectors.toList()));
         Bushcraft.LOGGER.info("[Bushcraft] Registered cooling recipes: {}", coolingRecipeHolders.size());
@@ -74,6 +82,7 @@ public class BushcraftJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.CHIPPER.get()), CHIPPING_RECIPE);
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.DRYING_RACK.get()), DRYING_RECIPE);
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.CRUCIBLE.get()), COOLING_RECIPE, MELTING_RECIPE);
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.WASHER.get()), WASHING_RECIPE);

@@ -17,5 +17,4 @@ public class WasherMenu extends AbstractFurnaceMenu {
     public WasherMenu(int i, Inventory inventory, Container container, ContainerData containerData) {
         super(ModMenus.WASHER.get(), ModRecipes.WASHING.get(), RecipeBookType.FURNACE, i, inventory, container, containerData);
     }
-    
 }

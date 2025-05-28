@@ -1,0 +1,13 @@
+{
+  "type": "bushcraft:chipping",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.2,
+  "ingredient": {
+    "tag": "minecraft:logs"
+  },
+  "result": {
+    "count": 8,
+    "id": "bushcraft:mulch"
+  }
+}

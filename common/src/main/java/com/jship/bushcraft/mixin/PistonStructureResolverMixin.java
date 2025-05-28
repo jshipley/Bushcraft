@@ -22,7 +22,6 @@ public class PistonStructureResolverMixin {
 
     @Inject(method = "canStickToEachOther(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;)Z", at = @At("HEAD"), cancellable = true)
     private static void injectCanStickToEachOther(BlockState state1, BlockState state2, CallbackInfoReturnable<Boolean> cir) {
-        log.info("state1: {}, sticky? {}, state2: {}, sticky? {}", state1, state1.is(ModBlockTags.C_STICKY), state2, state2.is(ModBlockTags.C_STICKY));
         if (state1.is(ModBlockTags.C_STICKY) && state2.is(ModBlockTags.C_STICKY) && !state1.is(state2.getBlock())) {
             cir.setReturnValue(false);
         } else {

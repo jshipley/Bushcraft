@@ -6,6 +6,7 @@ import com.jship.bushcraft.Bushcraft;
 import com.jship.bushcraft.init.ModBlocks;
 import com.jship.bushcraft.init.ModItems;
 import com.jship.bushcraft.init.ModTags.ModItemTags;
+import com.jship.bushcraft.recipe.ChippingRecipe;
 import com.jship.bushcraft.recipe.CoolingRecipe;
 import com.jship.bushcraft.recipe.DryingRecipe;
 import com.jship.bushcraft.recipe.MeltingRecipe;
@@ -97,6 +98,44 @@ public class BushcraftRecipeProvider extends FabricRecipeProvider {
             .define('R', ConventionalItemTags.WOODEN_RODS)
             .unlockedBy(getHasName(ModItems.COPPER_NUGGET.get()), has(ModItemTags.C_COPPER_NUGGETS))
             .save(output, Bushcraft.id("crafting/copper_bell"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.CHIPPER.get())
+            .pattern("C C")
+            .pattern("WsW")
+            .pattern("SLS")
+            .define('C', ConventionalItemTags.COPPER_INGOTS)
+            .define('W', ModItems.WOODEN_COG.get())
+            .define('s', Items.STONE_SLAB)
+            .define('S', ConventionalItemTags.COBBLESTONES)
+            .define('L', ItemTags.LOGS)
+            .unlockedBy(getHasName(ModItems.WOODEN_COG.get()), has(ModItems.WOODEN_COG.get()))
+            .save(output, Bushcraft.id("crafting/chipper"));
+        // ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.RITUAL_BOWL.get())
+        //     .pattern("C C")
+        //     .pattern(" C ")
+        //     .pattern("cSc")
+        //     .define('C', ConventionalItemTags.COPPER_INGOTS)
+        //     .define('c', ModItemTags.C_COPPER_NUGGETS)
+        //     .define('S', Items.SMOOTH_STONE)
+        //     .unlockedBy(getHasName(Items.COPPER_INGOT), has(ConventionalItemTags.COPPER_INGOTS))
+        //     .save(output, Bushcraft.id("crafting/ritual_bowl"));
+        // ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.FERMENTING_BARREL.get())
+        //     .pattern("PSP")
+        //     .pattern("CpC")
+        //     .pattern("PSP")
+        //     .define('P', ItemTags.PLANKS)
+        //     .define('S', ItemTags.WOODEN_SLABS)
+        //     .define('p', ModItems.PITCH.get())
+        //     .define('C', ConventionalItemTags.COPPER_INGOTS)
+        //     .unlockedBy(getHasName(ModItems.PITCH.get()), has(ModItems.PITCH.get()))
+        //     .save(output, Bushcraft.id("crafting/fermenting_barrel"));
+        
+        offerChipping(output, "mulch_from_logs", new ChippingRecipe("", CookingBookCategory.MISC, Ingredient.of(ItemTags.LOGS), new ItemStack(ModItems.MULCH.get(), 8), 0.2f, 200));
+        offerChipping(output, "mulch_from_planks", new ChippingRecipe("", CookingBookCategory.MISC, Ingredient.of(ItemTags.PLANKS), new ItemStack(ModItems.MULCH.get(), 2), 0.1f, 200));
+        offerChipping(output, "mulch_from_sticks", new ChippingRecipe("", CookingBookCategory.MISC, Ingredient.of(ConventionalItemTags.WOODEN_RODS), new ItemStack(ModItems.MULCH.get()), 0.03f, 100));
+        offerChipping(output, "gravel_from_cobblestone", new ChippingRecipe("", CookingBookCategory.BLOCKS, Ingredient.of(ConventionalItemTags.COBBLESTONES), new ItemStack(Items.GRAVEL), 0.1f, 200));        
+
+        offerCooling(output, "obsidian_from_lava", CoolingRecipe.builder().input(Fluids.LAVA, FluidStack.bucketAmount()).result(Items.OBSIDIAN).build());
+        offerCooling(output, "ice_from_water", CoolingRecipe.builder().input(Fluids.WATER, FluidStack.bucketAmount()).result(Items.ICE).time(1800).build());
 
         offerDrying(output, "clay_from_mud", new DryingRecipe().category(CookingBookCategory.BLOCKS).ingredient(Items.MUD).result(Items.CLAY));
         offerDrying(output, "green_fiber_from_leaves", new DryingRecipe().category(CookingBookCategory.MISC).ingredient(ItemTags.LEAVES).result(ModItems.GREEN_FIBER.get()));
@@ -105,6 +144,7 @@ public class BushcraftRecipeProvider extends FabricRecipeProvider {
         offerDrying(output, "green_fiber_from_vines", new DryingRecipe().category(CookingBookCategory.MISC).ingredient(Items.VINE, Items.WEEPING_VINES, Items.TWISTING_VINES).result(ModItems.GREEN_FIBER.get()));
         offerDrying(output, "leather_from_flesh", new DryingRecipe().category(CookingBookCategory.MISC).ingredient(Items.ROTTEN_FLESH).result(Items.LEATHER));
         offerDrying(output, "dried_kelp", new DryingRecipe().category(CookingBookCategory.FOOD).ingredient(Items.KELP).result(Items.DRIED_KELP));
+        offerDrying(output, "paper_from_pulp", new DryingRecipe().category(CookingBookCategory.MISC).ingredient(ModItems.PULP.get()).result(Items.PAPER));
         // coral
         offerDrying(output, "brain_coral", new DryingRecipe().category(CookingBookCategory.BLOCKS).ingredient(Items.BRAIN_CORAL).result(Items.DEAD_BRAIN_CORAL));
         offerDrying(output, "brain_coral_block", new DryingRecipe().category(CookingBookCategory.BLOCKS).ingredient(Items.BRAIN_CORAL_BLOCK).result(Items.DEAD_BRAIN_CORAL_BLOCK));
@@ -122,9 +162,6 @@ public class BushcraftRecipeProvider extends FabricRecipeProvider {
         offerDrying(output, "tube_coral_block", new DryingRecipe().category(CookingBookCategory.BLOCKS).ingredient(Items.TUBE_CORAL_BLOCK).result(Items.DEAD_TUBE_CORAL_BLOCK));
         offerDrying(output, "tube_coral_fan", new DryingRecipe().category(CookingBookCategory.BLOCKS).ingredient(Items.TUBE_CORAL_FAN).result(Items.DEAD_TUBE_CORAL_FAN));
 
-        offerCooling(output, "obsidian_from_lava", CoolingRecipe.builder().input(Fluids.LAVA, FluidStack.bucketAmount()).result(Items.OBSIDIAN).build());
-        offerCooling(output, "ice_from_water", CoolingRecipe.builder().input(Fluids.WATER, FluidStack.bucketAmount()).result(Items.ICE).time(1800).build());
-
         offerMelting(output, "lava_from_netherrack", MeltingRecipe.builder().ingredient(Items.NETHERRACK).result(Fluids.LAVA, FluidStack.bucketAmount() / 4).time(2400).build());
         offerMelting(output, "lava_from_gravels", MeltingRecipe.builder().ingredient(ConventionalItemTags.GRAVELS).result(Fluids.LAVA, FluidStack.bucketAmount() / 4).time(2400).build());
         offerMelting(output, "lava_from_stones", MeltingRecipe.builder().ingredient(ConventionalItemTags.STONES).result(Fluids.LAVA, FluidStack.bucketAmount() / 4).build());
@@ -137,7 +174,7 @@ public class BushcraftRecipeProvider extends FabricRecipeProvider {
         offerWashing(output, "mud_from_dirt", new WashingRecipe("", CookingBookCategory.BLOCKS, Ingredient.of(ItemTags.DIRT), new ItemStack(Items.MUD), 0.2f, 200));
         offerWashing(output, "flint_from_gravel", new WashingRecipe("", CookingBookCategory.MISC, Ingredient.of(ConventionalItemTags.GRAVELS), new ItemStack(Items.FLINT), 0.1f, 200));
         offerWashing(output, "clay_from_terracota", new WashingRecipe("", CookingBookCategory.MISC, Ingredient.of(ItemTags.TERRACOTTA), new ItemStack(Items.CLAY), 0.2f, 200));
-        offerWashing(output, "gravel_from_cobblestone", new WashingRecipe("", CookingBookCategory.BLOCKS, Ingredient.of(ConventionalItemTags.COBBLESTONES), new ItemStack(Items.GRAVEL), 0.1f, 200));
+        offerWashing(output, "pulp_from_mulch", new WashingRecipe("", CookingBookCategory.MISC, Ingredient.of(ModItems.MULCH.get()), new ItemStack(ModItems.PULP.get()), 0.1f, 200));
         offerWashing(output, "sand_from_sandstone", new WashingRecipe("", CookingBookCategory.BLOCKS, Ingredient.of(ConventionalItemTags.SANDSTONE_BLOCKS), new ItemStack(Items.SAND), 0.1f, 200));
         offerWashing(output, "red_sand_from_red_sandstone", new WashingRecipe("", CookingBookCategory.BLOCKS, Ingredient.of(ConventionalItemTags.RED_SANDSTONE_BLOCKS), new ItemStack(Items.RED_SAND), 0.1f, 200));
         //copper
@@ -202,6 +239,9 @@ public class BushcraftRecipeProvider extends FabricRecipeProvider {
             .save(output, Bushcraft.id("crafting/wooden_cog"));
 
         nineBlockStorageRecipes(output, RecipeCategory.MISC, ModItems.COPPER_NUGGET.get(), RecipeCategory.MISC, Items.COPPER_INGOT, "crafting/copper_ingot", null, "crafting/copper_nugget", null);
+        nineBlockStorageRecipes(output, RecipeCategory.MISC, Items.FLINT, RecipeCategory.BUILDING_BLOCKS, ModBlocks.FLINT_BLOCK.get());
+        nineBlockStorageRecipes(output, RecipeCategory.MISC, ModItems.MULCH.get(), RecipeCategory.BUILDING_BLOCKS, ModBlocks.MULCH_BLOCK.get(), "crafting/mulch_block", null, "crafting/mulch", null);
+        threeByThreePacker(output, RecipeCategory.MISC, ModItems.WICKER.get(), ModItems.GREEN_FIBER.get());
 
         SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ModItems.SPRUCE_SAP_BUCKET.get()), RecipeCategory.REDSTONE, ModItems.PITCH_BUCKET.get(), 1.0f, 600)
             .unlockedBy(getHasName(ModItems.SPRUCE_SAP_BUCKET.get()), has(ModItems.SPRUCE_SAP_BUCKET.get()))
@@ -244,8 +284,6 @@ public class BushcraftRecipeProvider extends FabricRecipeProvider {
             .requires(ModItems.SYRUP_BUCKET.get())
             .unlockedBy(getHasName(ModItems.SYRUP_BUCKET.get()), has(ModItems.SYRUP_BUCKET.get()))
             .save(output, Bushcraft.id("crafting/sugar_from_syrup_bucket"));
-        
-        nineBlockStorageRecipes(output, RecipeCategory.MISC, Items.FLINT, RecipeCategory.BUILDING_BLOCKS, ModBlocks.FLINT_BLOCK.get());
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FLINT_AXE.get())
             .pattern("FF")
@@ -263,7 +301,7 @@ public class BushcraftRecipeProvider extends FabricRecipeProvider {
             .define('R', ConventionalItemTags.WOODEN_RODS)
             .unlockedBy(getHasName(Items.FLINT), has(Items.FLINT))
             .save(output, Bushcraft.id("crafting/flint_hoe"));
-            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FLINT_PICKAXE.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FLINT_PICKAXE.get())
             .pattern("FFF")
             .pattern(" R ")
             .pattern(" R ")
@@ -271,7 +309,7 @@ public class BushcraftRecipeProvider extends FabricRecipeProvider {
             .define('R', ConventionalItemTags.WOODEN_RODS)
             .unlockedBy(getHasName(Items.FLINT), has(Items.FLINT))
             .save(output, Bushcraft.id("crafting/flint_pickaxe"));
-            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FLINT_SHOVEL.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FLINT_SHOVEL.get())
             .pattern("F")
             .pattern("R")
             .pattern("R")
@@ -279,7 +317,7 @@ public class BushcraftRecipeProvider extends FabricRecipeProvider {
             .define('R', ConventionalItemTags.WOODEN_RODS)
             .unlockedBy(getHasName(Items.FLINT), has(Items.FLINT))
             .save(output, Bushcraft.id("crafting/flint_shovel"));
-            ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.FLINT_SWORD.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.FLINT_SWORD.get())
             .pattern("F")
             .pattern("F")
             .pattern("R")
@@ -385,6 +423,16 @@ public class BushcraftRecipeProvider extends FabricRecipeProvider {
             .save(output, Bushcraft.id("crafting/fire_charge_from_pitch"));
     }
 
+    public void offerChipping(RecipeOutput output, String name, ChippingRecipe recipe) {
+        val id = Bushcraft.id(name).withPrefix("chipping/");
+        val criteria = output.advancement()
+            .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
+            .rewards(AdvancementRewards.Builder.recipe(id))
+            .requirements(AdvancementRequirements.Strategy.OR)
+            .addCriterion(getHasName(ModBlocks.CHIPPER.get()), has(ModBlocks.CHIPPER.get()));
+        output.accept(id, recipe, criteria.build(id));
+    }
+
     public void offerCooling(RecipeOutput output, String name, CoolingRecipe recipe) {
         val id = Bushcraft.id(name).withPrefix("cooling/");
         val criteria = output.advancement()
@@ -416,7 +464,7 @@ public class BushcraftRecipeProvider extends FabricRecipeProvider {
     }
 
     public void offerWashing(RecipeOutput output, String name, WashingRecipe recipe) {
-        val id = Bushcraft.id(name).withPrefix("drying/");
+        val id = Bushcraft.id(name).withPrefix("washing/");
         val criteria = output.advancement()
             .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
             .rewards(AdvancementRewards.Builder.recipe(id))

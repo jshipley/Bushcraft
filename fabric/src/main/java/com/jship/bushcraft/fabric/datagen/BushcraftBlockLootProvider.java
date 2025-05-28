@@ -17,12 +17,16 @@ public class BushcraftBlockLootProvider extends FabricBlockLootTableProvider {
 
     @Override
     public void generate() {
+        dropSelf(ModBlocks.CHIPPER.get());
         dropSelf(ModBlocks.COPPER_BELL.get());
         dropSelf(ModBlocks.CRUCIBLE.get());
         dropSelf(ModBlocks.DRYING_RACK.get());
+        // dropSelf(ModBlocks.FERMENTING_BARREL.get());
         dropSelf(ModBlocks.FLINT_BLOCK.get());
         dropSelf(ModBlocks.HAND_PUMP.get());
+        dropSelf(ModBlocks.MULCH_BLOCK.get());
         dropSelf(ModBlocks.PITCH_BLOCK.get());
+        // dropSelf(ModBlocks.RITUAL_BOWL.get());
         dropSelf(ModBlocks.TREE_TAP.get());
         dropSelf(ModBlocks.WASHER.get());
     }

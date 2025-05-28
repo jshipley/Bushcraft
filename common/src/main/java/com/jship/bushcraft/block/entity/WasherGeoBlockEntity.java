@@ -67,9 +67,9 @@ public class WasherGeoBlockEntity extends AbstractFurnaceBlockEntity implements 
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, WasherGeoBlockEntity blockEntity) {
         if (blockEntity.fluidStorage.getFluidInTank(0).getAmount() < FluidStack.bucketAmount() / (Platform.isFabric() ? 9 : 10)) {
-            val litTime = ((AbstractFurnaceBlockEntityAccessor)blockEntity).litTime();
+            val litTime = ((AbstractFurnaceBlockEntityAccessor)blockEntity).getLitTime();
             if (litTime > 0) {
-                ((AbstractFurnaceBlockEntityAccessor)blockEntity).litTime(litTime - 1);
+                ((AbstractFurnaceBlockEntityAccessor)blockEntity).setLitTime(litTime - 1);
             } else {
                 level.setBlock(pos, state.setValue(WasherBlock.LIT, false), 3);
             }

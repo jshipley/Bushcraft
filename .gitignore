@@ -44,3 +44,5 @@ replay_*.log
 # krita
 *.kra
 *~
+
+.architectury-transformer/

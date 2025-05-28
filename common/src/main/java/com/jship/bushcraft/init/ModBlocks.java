@@ -3,9 +3,11 @@ package com.jship.bushcraft.init;
 import java.util.function.Supplier;
 
 import com.jship.bushcraft.Bushcraft;
+import com.jship.bushcraft.block.ChipperBlock;
 import com.jship.bushcraft.block.CopperBellBlock;
 import com.jship.bushcraft.block.CrucibleBlock;
 import com.jship.bushcraft.block.DryingRackBlock;
+import com.jship.bushcraft.block.FermentingBarrelBlock;
 import com.jship.bushcraft.block.HandPumpBlock;
 import com.jship.bushcraft.block.PitchBlock;
 import com.jship.bushcraft.block.TreeTapBlock;
@@ -21,6 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
@@ -32,6 +35,8 @@ import net.minecraft.world.level.material.MapColor;
 public class ModBlocks {
     public static final Registrar<Block> BLOCKS = Bushcraft.MANAGER.get().get(Registries.BLOCK);
 
+    public static final RegistrySupplier<Block> CHIPPER = registerBlock(Bushcraft.id("chipper"),
+            () -> new ChipperBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SMOKER).noOcclusion()), true);
     public static final RegistrySupplier<Block> COPPER_BELL = registerBlock(Bushcraft.id("copper_bell"),
             () -> new CopperBellBlock(BlockBehaviour.Properties.of().instabreak().noOcclusion()), true);
     public static final RegistrySupplier<Block> CRUCIBLE = registerBlock(Bushcraft.id("crucible"),
@@ -45,6 +50,9 @@ public class ModBlocks {
             () -> new HandPumpBlock(
                     BlockBehaviour.Properties.ofFullCopy(Blocks.COBBLESTONE).ignitedByLava().noOcclusion()),
             true);
+    public static final RegistrySupplier<Block> MULCH_BLOCK = registerBlock(Bushcraft.id("mulch_block"),
+            () -> new Block(
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT).ignitedByLava()), true);
     public static final RegistrySupplier<Block> TREE_TAP = registerBlock(Bushcraft.id("tree_tap"),
             () -> new TreeTapBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CRAFTING_TABLE).ignitedByLava()
                     .noOcclusion().randomTicks()),
@@ -78,6 +86,10 @@ public class ModBlocks {
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL).mapColor(MapColor.DEEPSLATE)
                     .sound(SoundType.DEEPSLATE_TILES)),
             true);
+//     public static final RegistrySupplier<Block> RITUAL_BOWL = registerBlock(Bushcraft.id("ritual_bowl"),
+//             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BLOCK).noOcclusion()), true);
+//     public static final RegistrySupplier<Block> FERMENTING_BARREL = registerBlock(Bushcraft.id("fermenting_barrel"),
+//             () -> new FermentingBarrelBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BARREL)), true);
 
     public static void init() {
         DRYING_RACK.listen(rack -> {
@@ -85,15 +97,19 @@ public class ModBlocks {
             FuelRegistry.register(300, rack);
         });
         HAND_PUMP.listen(pump -> ((FireBlock) Blocks.FIRE).setFlammable(pump, 5, 20));
-        TREE_TAP.listen(tap -> {
-            ((FireBlock) Blocks.FIRE).setFlammable(tap, 5, 20);
-            FuelRegistry.register(300, tap);
+        MULCH_BLOCK.listen(mulch -> {
+                ((FireBlock) Blocks.FIRE).setFlammable(mulch, 5, 20);
+                FuelRegistry.register(300, mulch);
         });
         PITCH_BLOCK.listen(pitchBlock -> {
             ((FireBlock) Blocks.FIRE).setFlammable(pitchBlock, 10, 0);
             FuelRegistry.register(6400, pitchBlock);
         });
         SPRUCE_SAP_SOURCE.listen(sap -> ((FireBlock) Blocks.FIRE).setFlammable(sap, 5, 0));
+        TREE_TAP.listen(tap -> {
+            ((FireBlock) Blocks.FIRE).setFlammable(tap, 5, 20);
+            FuelRegistry.register(300, tap);
+        });
     }
 
     private static <T extends Block> RegistrySupplier<T> registerBlock(ResourceLocation id, Supplier<T> block,

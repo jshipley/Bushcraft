@@ -1,0 +1,12 @@
+{
+  "type": "bushcraft:washing",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.1,
+  "ingredient": {
+    "item": "bushcraft:mulch"
+  },
+  "result": {
+    "id": "bushcraft:pulp"
+  }
+}

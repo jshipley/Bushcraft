@@ -6,7 +6,6 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.jship.bushcraft.fabric.compat.rei.BushcraftReiPlugin;
 import com.jship.bushcraft.fabric.compat.rei.display.BushcraftReiCoolingDisplay;
-import com.jship.bushcraft.fabric.compat.rei.display.BushcraftReiDryingDisplay;
 import com.jship.bushcraft.init.ModBlocks;
 
 import me.shedaniel.math.Point;

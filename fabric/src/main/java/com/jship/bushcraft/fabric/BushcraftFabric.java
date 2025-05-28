@@ -25,7 +25,7 @@ public final class BushcraftFabric implements ModInitializer {
                 ModBlockEntities.CRUCIBLE.get(), ModBlockEntities.DRYING_RACK.get());
         ItemStorage.SIDED.registerForBlockEntities(
                 (blockEntity, direction) -> InventoryStorage.of((WorldlyContainer) blockEntity, direction),
-                ModBlockEntities.WASHER.get());
+                ModBlockEntities.CHIPPER.get(), ModBlockEntities.WASHER.get());
         FluidStorage.SIDED.registerForBlockEntities(
                 (blockEntity,
                         direction) -> ((SpiritFluidStorageImpl) ((SpiritFluidStorageProvider) blockEntity)

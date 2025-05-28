@@ -1,16 +1,19 @@
 package com.jship.bushcraft.fabric.compat.rei;
 
 import com.jship.bushcraft.Bushcraft;
+import com.jship.bushcraft.fabric.compat.rei.category.BushcraftReiChippingCategory;
 import com.jship.bushcraft.fabric.compat.rei.category.BushcraftReiCoolingCategory;
 import com.jship.bushcraft.fabric.compat.rei.category.BushcraftReiDryingCategory;
 import com.jship.bushcraft.fabric.compat.rei.category.BushcraftReiMeltingCategory;
 import com.jship.bushcraft.fabric.compat.rei.category.BushcraftReiWashingCategory;
+import com.jship.bushcraft.fabric.compat.rei.display.BushcraftReiChippingDisplay;
 import com.jship.bushcraft.fabric.compat.rei.display.BushcraftReiCoolingDisplay;
 import com.jship.bushcraft.fabric.compat.rei.display.BushcraftReiDryingDisplay;
 import com.jship.bushcraft.fabric.compat.rei.display.BushcraftReiMeltingDisplay;
 import com.jship.bushcraft.fabric.compat.rei.display.BushcraftReiWashingDisplay;
 import com.jship.bushcraft.init.ModBlocks;
 import com.jship.bushcraft.init.ModRecipes;
+import com.jship.bushcraft.recipe.ChippingRecipe;
 import com.jship.bushcraft.recipe.CoolingRecipe;
 import com.jship.bushcraft.recipe.DryingRecipe;
 import com.jship.bushcraft.recipe.MeltingRecipe;
@@ -27,6 +30,7 @@ import net.minecraft.resources.ResourceLocation;
 public class BushcraftReiPlugin implements REIClientPlugin {
 
     private static final ResourceLocation ID = Bushcraft.id("rei_plugin");
+    public static final CategoryIdentifier<BushcraftReiChippingDisplay> CHIPPING = CategoryIdentifier.of(Bushcraft.MOD_ID, "rei_chipping_category");
     public static final CategoryIdentifier<BushcraftReiCoolingDisplay> COOLING = CategoryIdentifier.of(Bushcraft.MOD_ID, "rei_cooling_category");
     public static final CategoryIdentifier<BushcraftReiDryingDisplay> DRYING = CategoryIdentifier.of(Bushcraft.MOD_ID, "rei_drying_category");
     public static final CategoryIdentifier<BushcraftReiMeltingDisplay> MELTING = CategoryIdentifier.of(Bushcraft.MOD_ID, "rei_melting_category");
@@ -34,6 +38,8 @@ public class BushcraftReiPlugin implements REIClientPlugin {
 
     @Override
     public void registerCategories(CategoryRegistry registry) {
+        registry.add(new BushcraftReiChippingCategory());
+        registry.addWorkstations(CHIPPING, EntryStacks.of(ModBlocks.CHIPPER.get()));
         registry.add(new BushcraftReiCoolingCategory());
         registry.addWorkstations(COOLING, EntryStacks.of(ModBlocks.CRUCIBLE.get()));
         registry.add(new BushcraftReiDryingCategory());
@@ -46,6 +52,7 @@ public class BushcraftReiPlugin implements REIClientPlugin {
 
     @Override
     public void registerDisplaySerializer(DisplaySerializerRegistry registry) {
+        registry.register(CHIPPING, BushcraftReiChippingDisplay.serializer(BushcraftReiChippingDisplay::new));
         registry.register(COOLING, BushcraftReiCoolingDisplay.serializer(BushcraftReiCoolingDisplay::new));
         registry.register(DRYING, BushcraftReiDryingDisplay.serializer(BushcraftReiDryingDisplay::new));
         registry.register(MELTING, BushcraftReiMeltingDisplay.serializer(BushcraftReiMeltingDisplay::new));
@@ -54,6 +61,7 @@ public class BushcraftReiPlugin implements REIClientPlugin {
 
     @Override
     public void registerDisplays(DisplayRegistry registry) {
+        registry.registerRecipeFiller(ChippingRecipe.class, ModRecipes.CHIPPING.get(), BushcraftReiChippingDisplay::new);
         registry.registerRecipeFiller(CoolingRecipe.class, ModRecipes.COOLING.get(), BushcraftReiCoolingDisplay::new);
         registry.registerRecipeFiller(DryingRecipe.class, ModRecipes.DRYING.get(), BushcraftReiDryingDisplay::new);
         registry.registerRecipeFiller(MeltingRecipe.class, ModRecipes.MELTING.get(), BushcraftReiMeltingDisplay::new);

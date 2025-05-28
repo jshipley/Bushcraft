@@ -26,12 +26,20 @@ public class BushcraftBlockTagProvider extends FabricTagProvider.BlockTagProvide
     @Override
     protected void addTags(HolderLookup.Provider lookupProvider) {
         getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_AXE)
-            .add(ModBlocks.DRYING_RACK.get(), ModBlocks.HAND_PUMP.get(), ModBlocks.TREE_TAP.get());
+            .add(ModBlocks.DRYING_RACK.get(), ModBlocks.HAND_PUMP.get(), //ModBlocks.FERMENTING_BARREL.get(),
+             ModBlocks.TREE_TAP.get());
+        getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_SHOVEL)
+            .add(ModBlocks.MULCH_BLOCK.get());
         getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_PICKAXE)
-            .add(ModBlocks.CRUCIBLE.get(), ModBlocks.FLINT_BLOCK.get(), ModBlocks.WASHER.get());
+            .add(ModBlocks.CHIPPER.get(), ModBlocks.CRUCIBLE.get(), ModBlocks.FLINT_BLOCK.get(), //ModBlocks.RITUAL_BOWL.get(),
+             ModBlocks.WASHER.get());
         getOrCreateTagBuilder(BlockTags.INFINIBURN_OVERWORLD)
             .add(ModBlocks.SPRUCE_SAP_SOURCE.get())
             .add(ModBlocks.PITCH_BLOCK.get());
+        getOrCreateTagBuilder(BlockTags.DIRT)
+            .add(ModBlocks.MULCH_BLOCK.get());
+        getOrCreateTagBuilder(BlockTags.MOSS_REPLACEABLE)
+            .add(ModBlocks.MULCH_BLOCK.get());
         getOrCreateTagBuilder(ModBlockTags.PRODUCES_SAP)
             .forceAddTag(BlockTags.SPRUCE_LOGS)
             .forceAddTag(BlockTags.BIRCH_LOGS);

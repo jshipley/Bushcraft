@@ -1,5 +1,6 @@
 package com.jship.bushcraft.compat.emi;
 
+import com.jship.bushcraft.compat.emi.recipe.EmiChippingRecipe;
 import com.jship.bushcraft.compat.emi.recipe.EmiCoolingRecipe;
 import com.jship.bushcraft.compat.emi.recipe.EmiDryingRecipe;
 import com.jship.bushcraft.compat.emi.recipe.EmiMeltingRecipe;
@@ -18,6 +19,10 @@ import net.minecraft.world.item.crafting.RecipeManager;
 @EmiEntrypoint
 public class BushcraftEmiPlugin implements EmiPlugin {
 
+    public static final EmiStack CHIPPER = EmiStack.of(ModBlocks.CHIPPER.get());
+    public static final ResourceLocation CHIPPING_ID = ModRecipes.CHIPPING.getId();
+    public static final EmiRecipeCategory CHIPPING_CATEGORY = new EmiRecipeCategory(CHIPPING_ID, CHIPPER, CHIPPER);
+
     public static final EmiStack CRUCIBLE = EmiStack.of(ModBlocks.CRUCIBLE.get());
     public static final ResourceLocation COOLING_ID = ModRecipes.COOLING.getId();
     public static final EmiRecipeCategory COOLING_CATEGORY = new EmiRecipeCategory(COOLING_ID, CRUCIBLE, CRUCIBLE);
@@ -34,6 +39,8 @@ public class BushcraftEmiPlugin implements EmiPlugin {
 
     @Override
     public void register(EmiRegistry registry) {
+        registry.addCategory(CHIPPING_CATEGORY);
+        registry.addWorkstation(CHIPPING_CATEGORY, CHIPPER);
         registry.addCategory(COOLING_CATEGORY);
         registry.addWorkstation(COOLING_CATEGORY, CRUCIBLE);
         registry.addCategory(MELTING_CATEGORY);
@@ -45,6 +52,7 @@ public class BushcraftEmiPlugin implements EmiPlugin {
 
         RecipeManager recipeManager = registry.getRecipeManager();
 
+        recipeManager.getAllRecipesFor(ModRecipes.CHIPPING.get()).forEach(recipe -> registry.addRecipe(new EmiChippingRecipe(recipe.id(), recipe.value())));
         recipeManager.getAllRecipesFor(ModRecipes.COOLING.get()).forEach(recipe -> registry.addRecipe(new EmiCoolingRecipe(recipe.id(), recipe.value())));
         recipeManager.getAllRecipesFor(ModRecipes.MELTING.get()).forEach(recipe -> registry.addRecipe(new EmiMeltingRecipe(recipe.id(), recipe.value())));
         recipeManager.getAllRecipesFor(ModRecipes.DRYING.get()).forEach(recipe -> registry.addRecipe(new EmiDryingRecipe(recipe.id(), recipe.value())));

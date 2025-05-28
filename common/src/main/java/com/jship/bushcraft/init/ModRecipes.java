@@ -1,6 +1,7 @@
 package com.jship.bushcraft.init;
 
 import com.jship.bushcraft.Bushcraft;
+import com.jship.bushcraft.recipe.ChippingRecipe;
 import com.jship.bushcraft.recipe.CoolingRecipe;
 import com.jship.bushcraft.recipe.DryingRecipe;
 import com.jship.bushcraft.recipe.MeltingRecipe;
@@ -17,6 +18,16 @@ public class ModRecipes {
     public static final Registrar<RecipeType<?>> RECIPES = Bushcraft.MANAGER.get().get(Registries.RECIPE_TYPE);
     public static final Registrar<RecipeSerializer<?>> RECIPE_SERIALIZERS = Bushcraft.MANAGER.get()
             .get(Registries.RECIPE_SERIALIZER);
+
+    public static final RegistrySupplier<RecipeType<ChippingRecipe>> CHIPPING = RECIPES.register(Bushcraft.id("chipping"),
+            () -> new RecipeType<ChippingRecipe>() {
+                @Override
+                public String toString() {
+                    return Bushcraft.MOD_ID + ":chipping";
+                }
+            });
+    public static final RegistrySupplier<ChippingRecipe.Serializer> CHIPPING_SERIALIZER = RECIPE_SERIALIZERS
+            .register(Bushcraft.id("chipping"), ChippingRecipe.Serializer::new);
 
     public static final RegistrySupplier<RecipeType<CoolingRecipe>> COOLING = RECIPES.register(Bushcraft.id("cooling"),
             () -> new RecipeType<CoolingRecipe>() {

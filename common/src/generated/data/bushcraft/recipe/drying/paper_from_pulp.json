@@ -1,0 +1,11 @@
+{
+  "type": "bushcraft:drying",
+  "category": "misc",
+  "ingredient": {
+    "item": "bushcraft:pulp"
+  },
+  "result": {
+    "id": "minecraft:paper"
+  },
+  "time": 900
+}

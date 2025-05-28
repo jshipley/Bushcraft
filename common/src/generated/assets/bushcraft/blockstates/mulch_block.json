@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "bushcraft:block/mulch_block"
+    }
+  }
+}

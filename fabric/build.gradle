@@ -65,6 +65,10 @@ dependencies {
 
 loom {
     runs {
+        client {
+            client()
+            vmArg "-Dmixin.debug=true"
+        }
         datagen {
             inherit server
             "Data Generation"
