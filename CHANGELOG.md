@@ -1,4 +1,3 @@
-* Added new "Chipper" block and recipes
-* Added mulch, mulch block, and pulp
-* Making paper from wood is now possible!
-* Moved cobblestone to gravel recipe from washer to chipper
+* New GUI screens for Chipper, Crucible, and Washer
+* Chipper and Washer are no AbstractFurnace blocks
+* Improved item handling api and fixed some more item handling bugs

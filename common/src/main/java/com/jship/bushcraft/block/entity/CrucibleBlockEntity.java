@@ -1,9 +1,8 @@
 package com.jship.bushcraft.block.entity;
 
-import java.util.List;
-
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.collect.ImmutableList;
 import com.jship.bushcraft.init.ModBlockEntities;
 import com.jship.bushcraft.init.ModRecipes;
 import com.jship.bushcraft.init.ModTags.ModBlockTags;
@@ -46,8 +45,7 @@ public class CrucibleBlockEntity extends BlockEntity implements SpiritFluidStora
             FluidStack.bucketAmount(),
             this::markUpdated);
     public final SpiritItemStorage itemStorage = SpiritItemStorage
-            .create(List.of(new SlotConfig(true, true, 1,
-                    stack -> fluidStorage.getFluidInTank(0).getAmount() < fluidStorage.getTankCapacity(0))),
+            .create(ImmutableList.of(SlotConfig.SINGLE_ITEM_SLOT.withInsertFilter(stack -> fluidStorage.getFluidInTank(0).getAmount() < fluidStorage.getTankCapacity(0))),
                     this::markUpdated);
 
     private static final RecipeManager.CachedCheck<SingleRecipeInput, MeltingRecipe> meltQuickCheck = RecipeManager

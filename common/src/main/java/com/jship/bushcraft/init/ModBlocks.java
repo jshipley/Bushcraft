@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 
 public class ModBlocks {
@@ -84,7 +85,8 @@ public class ModBlocks {
             false);
     public static final RegistrySupplier<Block> FLINT_BLOCK = registerBlock(Bushcraft.id("flint_block"),
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL).mapColor(MapColor.DEEPSLATE)
-                    .sound(SoundType.DEEPSLATE_TILES)),
+                    .requiresCorrectToolForDrops().strength(1.5F, 3.0F)
+                    .sound(SoundType.DEEPSLATE_TILES).instrument(NoteBlockInstrument.BASEDRUM)),
             true);
 //     public static final RegistrySupplier<Block> RITUAL_BOWL = registerBlock(Bushcraft.id("ritual_bowl"),
 //             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BLOCK).noOcclusion()), true);

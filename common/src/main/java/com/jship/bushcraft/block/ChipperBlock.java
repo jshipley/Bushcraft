@@ -6,20 +6,24 @@ import com.jship.bushcraft.block.entity.ChipperGeoBlockEntity;
 import com.jship.bushcraft.init.ModBlockEntities;
 import com.mojang.serialization.MapCodec;
 
+import dev.architectury.registry.menu.MenuRegistry;
 import lombok.val;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.MenuProvider;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -31,11 +35,13 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class ChipperBlock extends AbstractFurnaceBlock {
+public class ChipperBlock extends BaseEntityBlock {
     public static final MapCodec<ChipperBlock> CODEC = simpleCodec(ChipperBlock::new);
     public static final VoxelShape SHAPE = Shapes.or(
             Shapes.box(0, 0, 0, 1, 0.625, 1),
@@ -77,11 +83,68 @@ public class ChipperBlock extends AbstractFurnaceBlock {
     }
 
     @Override
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+            BlockHitResult hitResult) {
+        if (level.isClientSide) {
+            return InteractionResult.SUCCESS;
+        } else {
+            this.openContainer(level, pos, player);
+            return InteractionResult.CONSUME;
+        }
+    }
+
+    // TODO add use with item to insert items into chipper, and entity inside to add
+    // stuff into the hopper
+
     protected void openContainer(Level level, BlockPos pos, Player player) {
         val blockEntity = level.getBlockEntity(pos, ModBlockEntities.CHIPPER.get());
-        if (blockEntity.isPresent()) {
-            player.openMenu((MenuProvider) blockEntity.get());
+        if (blockEntity.isPresent() && player instanceof ServerPlayer serverPlayer) {
+            MenuRegistry.openExtendedMenu(serverPlayer, blockEntity.get());
         }
+    }
+
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock())) {
+            val blockEntity = level.getBlockEntity(pos, ModBlockEntities.CHIPPER.get());
+            if (blockEntity.isPresent()) {
+                if (level instanceof ServerLevel) {
+                    val itemStorage = blockEntity.get().itemStorage;
+                    for (int i = 0; i < itemStorage.getSlots(); i++) {
+                        Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), itemStorage.getStackInSlot(i));
+                    }
+                    blockEntity.get().getRecipesToAwardAndPopExperience((ServerLevel) level, Vec3.atCenterOf(pos));
+                }
+
+                super.onRemove(state, level, pos, newState, movedByPiston);
+                level.updateNeighbourForOutputSignal(pos, this);
+            } else {
+                super.onRemove(state, level, pos, newState, movedByPiston);
+            }
+
+        }
+    }
+
+    protected boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        // TODO move most of this into a util class
+        val blockEntity = level.getBlockEntity(pos, ModBlockEntities.CHIPPER.get());
+        if (blockEntity.isPresent()) {
+            var sum = 0;
+            var total = 0;
+            val itemStorage = blockEntity.get().itemStorage;
+            for (int i = 0; i < itemStorage.getSlots(); i++) {
+                total += itemStorage.getSlotLimit(i);
+                var stack = itemStorage.getStackInSlot(i);
+                if (!stack.isEmpty()) {
+                    sum += stack.getCount() * (64 / stack.getMaxStackSize());
+                }
+            }
+            return (int)Math.floor(1 + ((double)total / (double)sum) * 14);
+        }
+        return 0;
     }
 
     @Nullable
@@ -121,7 +184,7 @@ public class ChipperBlock extends AbstractFurnaceBlock {
     }
 
     @Override
-    protected MapCodec<? extends AbstractFurnaceBlock> codec() {
+    protected MapCodec<ChipperBlock> codec() {
         return CODEC;
     }
 }

@@ -1,14 +1,14 @@
 package com.jship.bushcraft.compat.emi.recipe;
 
+import java.util.List;
+
 import com.jship.bushcraft.compat.emi.BushcraftEmiPlugin;
 import com.jship.bushcraft.recipe.CoolingRecipe;
-import com.jship.bushcraft.recipe.DryingRecipe;
+
 import dev.emi.emi.api.recipe.BasicEmiRecipe;
 import dev.emi.emi.api.render.EmiTexture;
-import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
-import java.util.List;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 

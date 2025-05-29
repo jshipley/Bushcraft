@@ -18,9 +18,9 @@ public class EmiChippingRecipe extends BasicEmiRecipe {
     public EmiChippingRecipe(ResourceLocation id, ChippingRecipe recipe) {
         super(BushcraftEmiPlugin.CHIPPING_CATEGORY, BushcraftEmiPlugin.CHIPPING_ID, 76, 18);
         this.id = id;
-        this.inputs.add(EmiIngredient.of(recipe.getIngredients().getFirst()));
-        this.outputs.add(EmiStack.of(recipe.getResultItem(null)));
-        this.time = recipe.getCookingTime();
+        this.inputs.add(EmiIngredient.of(recipe.input()));
+        this.outputs.add(EmiStack.of(recipe.result()));
+        this.time = recipe.time();
     }
 
     @Override

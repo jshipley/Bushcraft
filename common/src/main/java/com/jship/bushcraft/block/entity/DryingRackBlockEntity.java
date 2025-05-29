@@ -1,10 +1,10 @@
 package com.jship.bushcraft.block.entity;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.collect.ImmutableList;
 import com.jship.bushcraft.init.ModBlockEntities;
 import com.jship.bushcraft.init.ModRecipes;
 import com.jship.bushcraft.recipe.DryingRecipe;
@@ -39,10 +39,13 @@ public class DryingRackBlockEntity extends BlockEntity implements SpiritItemStor
     public int[] dryingTime = new int[SLOT_COUNT];
     public int[] finishedDrying = new int[SLOT_COUNT];
 
-    private final SlotConfig slotConfig = new SpiritItemStorage.SlotConfig(true, true, 1, stack -> true);
     private final SpiritItemStorage itemStorage = SpiritItemStorage.create(
             // Should be SLOT_COUNT elements
-            List.of(slotConfig, slotConfig, slotConfig, slotConfig),
+            ImmutableList.of(
+                SlotConfig.SINGLE_ITEM_SLOT.withExtractFilter(stack -> this.finishedDrying[0] > 0),
+                SlotConfig.SINGLE_ITEM_SLOT.withExtractFilter(stack -> this.finishedDrying[1] > 0),
+                SlotConfig.SINGLE_ITEM_SLOT.withExtractFilter(stack -> this.finishedDrying[2] > 0),
+                SlotConfig.SINGLE_ITEM_SLOT.withExtractFilter(stack -> this.finishedDrying[3] > 0)),
             this::markUpdated);
 
     private final RecipeManager.CachedCheck<SingleRecipeInput, DryingRecipe> quickCheck = RecipeManager

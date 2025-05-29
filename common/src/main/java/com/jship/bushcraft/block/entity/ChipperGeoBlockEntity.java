@@ -1,43 +1,61 @@
 package com.jship.bushcraft.block.entity;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.jship.bushcraft.block.ChipperBlock;
 import com.jship.bushcraft.init.ModBlockEntities;
 import com.jship.bushcraft.init.ModRecipes;
 import com.jship.bushcraft.menu.ChipperMenu;
-import com.jship.bushcraft.mixin.AbstractFurnaceBlockEntityAccessor;
 import com.jship.bushcraft.recipe.ChippingRecipe;
+import com.jship.spiritapi.api.item.SpiritItemStorage;
+import com.jship.spiritapi.api.item.SpiritItemStorage.SlotConfig;
+import com.jship.spiritapi.api.item.SpiritItemStorageProvider;
 
+import dev.architectury.registry.fuel.FuelRegistry;
+import dev.architectury.registry.menu.ExtendedMenuProvider;
+import io.netty.buffer.ByteBufAllocator;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import lombok.Getter;
 import lombok.val;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.AbstractFurnaceBlock;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager.ControllerRegistrar;
@@ -46,157 +64,148 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 @Slf4j
-public class ChipperGeoBlockEntity extends AbstractFurnaceBlockEntity implements GeoBlockEntity {
+@Accessors(fluent = true)
+public class ChipperGeoBlockEntity extends BlockEntity
+        implements GeoBlockEntity, SpiritItemStorageProvider, RecipeCraftingHolder, ExtendedMenuProvider {
 
     public static final String ANIM_NAME = "chipper_animation";
     public static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenPlayAndHold("animation.model.idle");
     public static final RawAnimation WORKING_ANIM = RawAnimation.begin().thenLoop("animation.model.working");
 
+    public final SpiritItemStorage itemStorage = SpiritItemStorage.create(
+            ImmutableList.of(SlotConfig.builder()
+                    .validItem(stack -> this.level != null
+                            && quickCheck.getRecipeFor(new SingleRecipeInput(stack), this.level).isPresent())
+                    .canInsert(direction -> true).canExtract(direction -> false).build(),
+                    SlotConfig.builder().canInsert(direction -> direction.getAxis().isHorizontal())
+                            .canExtract(direction -> false)
+                            .validItem(stack -> AbstractFurnaceBlockEntity.isFuel(stack)).build(),
+                    SlotConfig.builder().canInsert(direction -> false).playerInsert(false).build(),
+                    SlotConfig.builder().canInsert(direction -> false).playerInsert(false).build()),
+            this::setChanged);
     public static final double SECONDS_PER_CYCLE = 2.0d;
 
-    public float progress = 0f;
+    private static final RecipeManager.CachedCheck<SingleRecipeInput, ChippingRecipe> quickCheck = RecipeManager
+            .createCheck(ModRecipes.CHIPPING.get());
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
+    private static int INPUT_SLOT = 0;
+    private static int FUEL_SLOT = 1;
+    private static int OUTPUT_SLOT = 2;
+    private static int BONUS_SLOT = 3;
+
+    @Getter
+    protected int litTime = 0;
+    @Getter
+    protected int litTotalTime = 0;
+    @Getter
+    protected int assembleTime = 0;
+    @Getter
+    protected int assembleTotalTime = 0;
+    protected RecipeHolder<ChippingRecipe> activeRecipe;
+    private final Object2IntOpenHashMap<ResourceLocation> recipesUsed;
+
     public ChipperGeoBlockEntity(BlockPos pos, BlockState blockState) {
-        super(ModBlockEntities.CHIPPER.get(), pos, blockState, ModRecipes.CHIPPING.get());
+        super(ModBlockEntities.CHIPPER.get(), pos, blockState);
+        recipesUsed = new Object2IntOpenHashMap<>();
     }
 
-    // public static void serverTick(Level level, BlockPos pos, BlockState state, ChipperGeoBlockEntity blockEntity) {        
-    //     AbstractFurnaceBlockEntity.serverTick(level, pos, state, blockEntity);
-    //     if (Math.abs(blockEntity.progress - blockEntity.getProgress()) > 0.001) {
-    //         blockEntity.progress = blockEntity.getProgress();
-    //         blockEntity.setChanged();
-    //     }
-    // }
+    public boolean isLit() {
+        return litTime > 0;
+    }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, ChipperGeoBlockEntity blockEntity) {
-      val entityAccessor = ((AbstractFurnaceBlockEntityAccessor)blockEntity);
-      boolean bl = entityAccessor.invokeIsLit();
-      boolean bl2 = false;
-      if (entityAccessor.invokeIsLit()) {
-         entityAccessor.setLitTime(entityAccessor.getLitTime() - 1);
-      }
+        var dirty = false;
+        var wasLit = false;
 
-      ItemStack itemStack = (ItemStack)blockEntity.items.get(1);
-      ItemStack itemStack2 = (ItemStack)blockEntity.items.get(0);
-      boolean bl3 = !itemStack2.isEmpty();
-      boolean bl4 = !itemStack.isEmpty();
-      if (entityAccessor.invokeIsLit() || bl4 && bl3) {
-         RecipeHolder<? extends AbstractCookingRecipe> recipeHolder;
-         if (bl3) {
-            recipeHolder = entityAccessor.getQuickCheck().getRecipeFor(new SingleRecipeInput(itemStack2), level).orElse(null);
-         } else {
-            recipeHolder = null;
-         }
+        if (blockEntity.isLit()) {
+            wasLit = true;
+            blockEntity.litTime--;
+        }
 
-         int i = blockEntity.getMaxStackSize();
-         if (!entityAccessor.invokeIsLit() && canBurn(level.registryAccess(), recipeHolder, blockEntity.items, i)) {
-            entityAccessor.setLitTime(blockEntity.getBurnDuration(itemStack));
-            entityAccessor.setLitDuration(entityAccessor.getLitTime());
-            if (entityAccessor.invokeIsLit()) {
-               bl2 = true;
-               if (bl4) {
-                  Item item = itemStack.getItem();
-                  itemStack.shrink(1);
-                  if (itemStack.isEmpty()) {
-                     Item item2 = item.getCraftingRemainingItem();
-                     blockEntity.items.set(1, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
-                  }
-               }
+        if (level == null || level.isClientSide())
+            return;
+
+        val inputStack = blockEntity.itemStorage.getStackInSlot(INPUT_SLOT);
+        val fuelStack = blockEntity.itemStorage.getStackInSlot(FUEL_SLOT);
+        val outputStack = blockEntity.itemStorage.getStackInSlot(OUTPUT_SLOT);
+        val bonusStack = blockEntity.itemStorage.getStackInSlot(BONUS_SLOT);
+
+        // there's an item to process, and heat to do it with
+        if (!inputStack.isEmpty() && (blockEntity.isLit() || !fuelStack.isEmpty())) {
+
+            val recipeInput = new SingleRecipeInput(inputStack);
+            val recipe = quickCheck.getRecipeFor(recipeInput, level);
+            if (recipe.isPresent()) {
+                if (blockEntity.activeRecipe == null || blockEntity.activeRecipe.value() == null
+                        || !blockEntity.activeRecipe.value().matches(recipeInput, level))
+                    blockEntity.resetProgress(recipe.get());
             }
-         }
 
-         if (entityAccessor.invokeIsLit() && canBurn(level.registryAccess(), recipeHolder, blockEntity.items, i)) {
-            cookingProgress(blockEntity, entityAccessor.getCookingProgress() + 1);
-            if (entityAccessor.getCookingProgress() == entityAccessor.getCookingTotalTime()) {
-               cookingProgress(blockEntity, 0);
-               entityAccessor.setCookingTotalTime(AbstractFurnaceBlockEntityAccessor.invokeGetTotalCookTime(level, blockEntity));
-               if (burn(level.registryAccess(), recipeHolder, blockEntity.items, i)) {
-                  blockEntity.setRecipeUsed(recipeHolder);
-               }
+            if (canAssemble(recipe, blockEntity.itemStorage)) {
+                if (!blockEntity.isLit()) {
+                    val fuelTime = FuelRegistry.get(fuelStack);
+                    if (fuelTime > 0) {
 
-               bl2 = true;
+                        dirty = true;
+                        blockEntity.litTime = fuelTime;
+                        blockEntity.litTotalTime = fuelTime;
+                        val removedFuel = blockEntity.itemStorage.extractItem(FUEL_SLOT, 1, false);
+                        if (blockEntity.itemStorage.getStackInSlot(FUEL_SLOT).isEmpty()
+                                && removedFuel.getItem().hasCraftingRemainingItem())
+                            blockEntity.itemStorage.insertItem(FUEL_SLOT,
+                                    new ItemStack(removedFuel.getItem().getCraftingRemainingItem()), false);
+                    }
+                }
+
+                if (blockEntity.isLit()) {
+                    blockEntity.assembleTime++;
+                    dirty = true;
+                    if (blockEntity.assembleTime >= blockEntity.assembleTotalTime) {
+                        if (assemble(recipe, blockEntity.itemStorage)) {
+                            blockEntity.setRecipeUsed(recipe.get());
+                            blockEntity.resetProgress(null);
+                        }
+                    }
+                }
             }
-         } else {
-            cookingProgress(blockEntity, 0);
-         }
-      } else if (!entityAccessor.invokeIsLit() && entityAccessor.getCookingProgress() > 0) {
-         cookingProgress(blockEntity, Mth.clamp(entityAccessor.getCookingProgress() - 2, 0, entityAccessor.getCookingTotalTime()));
-      }
+        }
 
-      if (bl != entityAccessor.invokeIsLit()) {
-         bl2 = true;
-         state = (BlockState)state.setValue(AbstractFurnaceBlock.LIT, entityAccessor.invokeIsLit());
-         level.setBlock(pos, state, 3);
-      }
-
-      if (bl2) {
-         setChanged(level, pos, state);
-      }
-
-   }
-
-   private static void cookingProgress(ChipperGeoBlockEntity blockEntity, int progress) {
-      ((AbstractFurnaceBlockEntityAccessor)blockEntity).setCookingProgress(progress);
-      blockEntity.progress = blockEntity.getProgress();
-      blockEntity.setChanged();
-   }
-
-   private static boolean canBurn(RegistryAccess registryAccess, @Nullable RecipeHolder<?> recipe, NonNullList<ItemStack> inventory, int maxStackSize) {
-      if (!(inventory.get(0)).isEmpty() && recipe != null) {
-         ItemStack resultStack = recipe.value().getResultItem(registryAccess);
-         if (resultStack.isEmpty()) {
-            return false;
-         } else {
-            ItemStack outputStack = inventory.get(2);
-            if (outputStack.isEmpty()) {
-               return true;
-            } else if (!ItemStack.isSameItemSameComponents(outputStack, resultStack)) {
-               return false;
-            } else if (outputStack.getCount() + resultStack.getCount() < maxStackSize && outputStack.getCount() + resultStack.getCount() < outputStack.getMaxStackSize()) {
-               return true;
-            } else {
-               return outputStack.getCount() + resultStack.getCount() < resultStack.getMaxStackSize();
-            }
-         }
-      } else {
-         return false;
-      }
-   }
-
-   private static boolean burn(RegistryAccess registryAccess, @Nullable RecipeHolder<?> recipe, NonNullList<ItemStack> inventory, int maxStackSize) {
-      if (recipe != null && canBurn(registryAccess, recipe, inventory, maxStackSize)) {
-         ItemStack inputStack = (ItemStack)inventory.get(0);
-         ItemStack resultStack = recipe.value().getResultItem(registryAccess);
-         ItemStack outputStack = (ItemStack)inventory.get(2);
-         if (outputStack.isEmpty()) {
-            inventory.set(2, resultStack.copy());
-         } else if (ItemStack.isSameItemSameComponents(outputStack, resultStack)) {
-            outputStack.grow(resultStack.getCount());
-         }
-
-         if (inputStack.is(Blocks.WET_SPONGE.asItem()) && !(inventory.get(1)).isEmpty() && (inventory.get(1)).is(Items.BUCKET)) {
-            inventory.set(1, new ItemStack(Items.WATER_BUCKET));
-         }
-
-         inputStack.shrink(1);
-         return true;
-      } else {
-         return false;
-      }
-   }
-
-    @Override
-    protected void setItems(NonNullList<ItemStack> items) {
-        super.setItems(items);
-        setChanged();
+        if (dirty) {
+            if (wasLit != blockEntity.isLit())
+                level.setBlock(pos, state.setValue(ChipperBlock.LIT, blockEntity.isLit()), 3);
+            blockEntity.setChanged();
+        }
     }
 
-    @Override
-    public void setItem(int slot, ItemStack stack) {
-        super.setItem(slot, stack);
-        setChanged();
+    private static boolean canAssemble(Optional<RecipeHolder<ChippingRecipe>> recipe,
+            SpiritItemStorage itemStorage) {
+        if (itemStorage.getStackInSlot(INPUT_SLOT).isEmpty() || !recipe.isPresent())
+            return false;
+
+        val resultStack = recipe.get().value().result();
+        if (resultStack.isEmpty())
+            return false;
+
+        return itemStorage.insertItem(OUTPUT_SLOT, resultStack, true).isEmpty();
+    }
+
+    private static boolean assemble(Optional<RecipeHolder<ChippingRecipe>> recipe, SpiritItemStorage itemStorage) {
+        if (recipe.isPresent() && canAssemble(recipe, itemStorage)) {
+            val resultStack = recipe.get().value().result();
+
+            itemStorage.extractItem(INPUT_SLOT, 1, false);
+            itemStorage.insertItem(OUTPUT_SLOT, resultStack, false);
+            return true;
+        }
+        return false;
+    }
+
+    private void resetProgress(@Nullable RecipeHolder<ChippingRecipe> recipe) {
+        this.activeRecipe = recipe;
+        this.assembleTime = 0;
+        this.assembleTotalTime = recipe == null ? 0 : recipe.value().time();
     }
 
     @Override
@@ -210,28 +219,26 @@ public class ChipperGeoBlockEntity extends AbstractFurnaceBlockEntity implements
         return cache;
     }
 
-    protected void applyImplicitComponents(BlockEntity.DataComponentInput dataComponentInput) {
-        super.applyImplicitComponents(dataComponentInput);
-        dataComponentInput.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(items);
-    }
-
-    protected void collectImplicitComponents(DataComponentMap.Builder builder) {
-        super.collectImplicitComponents(builder);
-        builder.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(items));
-    }
-
     @Override
     public void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
         super.loadAdditional(nbt, registryLookup);
-        if (nbt.contains("Progress")) {
-            this.progress = nbt.getFloat("Progress");
+        if (nbt.contains("Items")) {
+            this.itemStorage.deserializeNbt(registryLookup, nbt);
         }
+        this.litTime = nbt.getShort("LitTime");
+        this.litTotalTime = nbt.getShort("LitTotalTime");
+        this.assembleTime = nbt.getShort("AssembleTime");
+        this.assembleTotalTime = nbt.getShort("AssembleTotalTime");
     }
 
     @Override
     public void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
         super.saveAdditional(nbt, registryLookup);
-        nbt.putFloat("Progress", this.getProgress());
+        nbt.merge(this.itemStorage.serializeNbt(registryLookup));
+        nbt.putShort("LitTime", (short) this.litTime);
+        nbt.putShort("LitTotalTime", (short) this.litTotalTime);
+        nbt.putShort("AssembleTime", (short) this.assembleTime);
+        nbt.putShort("AssembleTotalTime", (short) assembleTotalTime);
     }
 
     @Override
@@ -243,32 +250,96 @@ public class ChipperGeoBlockEntity extends AbstractFurnaceBlockEntity implements
     public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
         CompoundTag nbt = super.getUpdateTag(registryLookup);
         saveAdditional(nbt, registryLookup);
-        ContainerHelper.saveAllItems(nbt, items, true, registryLookup);
-        nbt.putFloat("Progress", this.getProgress());
         return nbt;
     }
 
     @Override
-    protected AbstractContainerMenu createMenu(int id, Inventory inventory) {
-        return new ChipperMenu(id, inventory, this, this.dataAccess);
+    @Nullable
+    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+        // doing this the "right" way crashes on Fabric, but this way works
+        val buf = new FriendlyByteBuf(ByteBufAllocator.DEFAULT.buffer());
+        saveExtraData(buf);
+        return new ChipperMenu(id, inventory, buf);
     }
 
     @Override
-    protected Component getDefaultName() {
+    public Component getDisplayName() {
         return Component.translatable("container.bushcraft.chipper");
-    }
-
-    public float getProgress() {
-        val progress = ((AbstractFurnaceBlockEntityAccessor)this).getCookingProgress();
-        val time = ((AbstractFurnaceBlockEntityAccessor)this).getCookingTotalTime();
-
-        return time > 0 ? (float)progress / (float)time : 0f;
     }
 
     @Override
     public void setChanged() {
         super.setChanged();
-        if (!this.getLevel().isClientSide())
+        if (this.getLevel() != null && !this.getLevel().isClientSide())
             this.getLevel().sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+    }
+
+    @Override
+    public @Nullable SpiritItemStorage getItemStorage(Direction face) {
+        return this.itemStorage;
+    }
+
+    /*
+     * Reward experience
+     */
+
+    public void setRecipeUsed(@Nullable RecipeHolder<?> recipe) {
+        if (recipe != null) {
+            ResourceLocation resourceLocation = recipe.id();
+            this.recipesUsed.addTo(resourceLocation, 1);
+        }
+
+    }
+
+    @Nullable
+    public RecipeHolder<?> getRecipeUsed() {
+        return null;
+    }
+
+    public void awardUsedRecipes(Player player, List<ItemStack> items) {
+    }
+
+    public void awardUsedRecipesAndPopExperience(ServerPlayer player) {
+        List<RecipeHolder<?>> list = this.getRecipesToAwardAndPopExperience(player.serverLevel(), player.position());
+        player.awardRecipes(list);
+
+        for (var recipeHolder : list) {
+            if (recipeHolder != null) {
+                // not sure if this is right...
+                player.triggerRecipeCrafted(recipeHolder, NonNullList.of(ItemStack.EMPTY, this.itemStorage.getStackInSlot(INPUT_SLOT)));
+            }
+        }
+
+        this.recipesUsed.clear();
+    }
+
+    public List<RecipeHolder<?>> getRecipesToAwardAndPopExperience(ServerLevel level, Vec3 popVec) {
+        List<RecipeHolder<?>> list = Lists.newArrayList();
+        val recipeIter = this.recipesUsed.object2IntEntrySet().iterator();
+
+        for (var recipeEntry : this.recipesUsed.object2IntEntrySet()) {
+            level.getRecipeManager().byKey(recipeEntry.getKey()).ifPresent(recipeHolder -> {
+                list.add(recipeHolder);
+                createExperience(level, popVec, recipeEntry.getIntValue(),
+                        ((AbstractCookingRecipe) recipeHolder.value()).getExperience());
+            });
+        }
+
+        return list;
+    }
+
+    private static void createExperience(ServerLevel level, Vec3 popVec, int recipeIndex, float experience) {
+        int i = Mth.floor((float) recipeIndex * experience);
+        float f = Mth.frac((float) recipeIndex * experience);
+        if (f > 0.001f && Math.random() < (double) f) {
+            ++i;
+        }
+
+        ExperienceOrb.award(level, popVec, i);
+    }
+
+    @Override
+    public void saveExtraData(FriendlyByteBuf buf) {
+        buf.writeBlockPos(this.getBlockPos());
     }
 }

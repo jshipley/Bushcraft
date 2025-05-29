@@ -31,9 +31,9 @@ public class BushcraftJeiChippingCategory extends AbstractRecipeCategory<Chippin
     @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, ChippingRecipe recipe, IFocusGroup focuses) {
         builder.addRecipeArrow().setPosition(26, 9);
-        builder.addAnimatedRecipeArrow(recipe.getCookingTime()).setPosition(26, 9);
+        builder.addAnimatedRecipeArrow(recipe.time()).setPosition(26, 9);
         builder
-            .addText(Component.translatable("gui.jei.category.smelting.time.seconds", (int) (recipe.getCookingTime() / 20)), getWidth() - 20, 10)
+            .addText(Component.translatable("gui.jei.category.smelting.time.seconds", (int) (recipe.time() / 20)), getWidth() - 20, 10)
             .setPosition(0, 0, getWidth(), getHeight(), HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM)
             .setTextAlignment(HorizontalAlignment.RIGHT)
             .setTextAlignment(VerticalAlignment.BOTTOM)

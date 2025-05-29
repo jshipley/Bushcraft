@@ -29,6 +29,7 @@ public class TreeTapBlockEntity extends BlockEntity implements SpiritFluidStorag
 
     private static long SAP_AMOUNT = Platform.isFabric() ? FluidStack.bucketAmount() / 9 : FluidStack.bucketAmount() / 10;
 
+    @SuppressWarnings("deprecation")
     public final SpiritFluidStorage fluidStorage = SpiritFluidStorage.create(FluidStack.bucketAmount(),
             FluidStack.bucketAmount(), () -> markUpdated(), fluidStack -> fluidStack.getFluid().is(ModFluidTags.C_SAPS));
 

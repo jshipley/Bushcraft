@@ -19,7 +19,7 @@ public class BushcraftReiChippingDisplay extends BasicDisplay {
     public int chipTime;
 
     public BushcraftReiChippingDisplay(RecipeHolder<ChippingRecipe> recipe) {
-        this(List.of(EntryIngredients.ofIngredient(recipe.value().getIngredients().getFirst())), Collections.singletonList(EntryIngredients.of(recipe.value().getResultItem(null))), recipe, recipe.value().getCookingTime());
+        this(List.of(EntryIngredients.ofIngredient(recipe.value().getIngredients().getFirst())), Collections.singletonList(EntryIngredients.of(recipe.value().result())), recipe, recipe.value().time());
     }
 
     public BushcraftReiChippingDisplay(List<EntryIngredient> input, List<EntryIngredient> output, CompoundTag tag) {
