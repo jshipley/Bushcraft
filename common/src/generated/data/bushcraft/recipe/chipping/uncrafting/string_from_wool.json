@@ -1,0 +1,11 @@
+{
+  "type": "bushcraft:chipping",
+  "experience": 0.1,
+  "ingredient": {
+    "tag": "minecraft:wool"
+  },
+  "result": {
+    "count": 4,
+    "id": "minecraft:string"
+  }
+}

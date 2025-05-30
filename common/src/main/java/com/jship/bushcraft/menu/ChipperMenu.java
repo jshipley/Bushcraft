@@ -1,5 +1,10 @@
 package com.jship.bushcraft.menu;
 
+import static com.jship.bushcraft.block.entity.ChipperGeoBlockEntity.INPUT_SLOT;
+import static com.jship.bushcraft.block.entity.ChipperGeoBlockEntity.FUEL_SLOT;
+import static com.jship.bushcraft.block.entity.ChipperGeoBlockEntity.OUTPUT_SLOT;
+import static com.jship.bushcraft.block.entity.ChipperGeoBlockEntity.BONUS_SLOT;
+
 import com.jship.bushcraft.block.entity.ChipperGeoBlockEntity;
 import com.jship.bushcraft.init.ModBlocks;
 import com.jship.bushcraft.init.ModMenus;
@@ -113,10 +118,10 @@ public class ChipperMenu extends AbstractContainerMenu {
     }
 
     private void addBlockInventory(SpiritItemStorage itemStorage) {
-        this.addSlot(new SpiritItemSlot(itemStorage, 0, 56, 34));
-        this.addSlot(new SpiritItemSlot(itemStorage, 1, 26, 53));
-        this.addSlot(new SpiritItemSlot(itemStorage, 2, 116, 25));
-        this.addSlot(new SpiritItemSlot(itemStorage, 3, 116, 49));
+        this.addSlot(new SpiritItemSlot(itemStorage, INPUT_SLOT, 56, 34));
+        this.addSlot(new SpiritItemSlot(itemStorage, FUEL_SLOT, 25, 41));
+        this.addSlot(new SpiritItemSlot(itemStorage, OUTPUT_SLOT, 114, 34));
+        this.addSlot(new SpiritItemSlot(itemStorage, BONUS_SLOT, 140, 34));
     }
 
     @Override

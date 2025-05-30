@@ -1,0 +1,11 @@
+{
+  "type": "bushcraft:chipping",
+  "experience": 0.1,
+  "ingredient": {
+    "tag": "minecraft:saplings"
+  },
+  "result": {
+    "count": 1,
+    "id": "bushcraft:mulch"
+  }
+}

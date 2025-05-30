@@ -43,4 +43,8 @@ This is an alpha release. There are no major known issues, but this is an early 
 
 ## Credits
 
+Textures
 * https://github.com/malcolmriley/unused-textures for some of the item textures used in Bushcraft
+
+Sound effects
+* Tumbling Rocks by Fission9 -- https://freesound.org/s/488660/ -- License: Creative Commons 0

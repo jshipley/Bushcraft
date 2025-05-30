@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bushcraft:chipping/gravel_from_cobblestone"
+        "recipe": "bushcraft:chipping/copper_from_ore"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "bushcraft:chipping/gravel_from_cobblestone"
+      "bushcraft:chipping/copper_from_ore"
     ]
   }
 }

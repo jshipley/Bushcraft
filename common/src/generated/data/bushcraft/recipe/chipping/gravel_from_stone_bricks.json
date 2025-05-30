@@ -1,10 +1,16 @@
 {
   "type": "bushcraft:chipping",
   "category": "blocks",
-  "cookingtime": 200,
+  "chanceResult": {
+    "chance": 0.2,
+    "result": {
+      "count": 1,
+      "id": "minecraft:sand"
+    }
+  },
   "experience": 0.1,
   "ingredient": {
-    "tag": "c:cobblestones"
+    "tag": "minecraft:stone_bricks"
   },
   "result": {
     "count": 1,

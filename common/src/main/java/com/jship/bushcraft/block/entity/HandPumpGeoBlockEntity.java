@@ -1,8 +1,6 @@
 package com.jship.bushcraft.block.entity;
 
 import java.util.ArrayDeque;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;

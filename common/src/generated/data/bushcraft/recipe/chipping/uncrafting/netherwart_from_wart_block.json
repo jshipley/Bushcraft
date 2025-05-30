@@ -1,0 +1,11 @@
+{
+  "type": "bushcraft:chipping",
+  "experience": 0.1,
+  "ingredient": {
+    "item": "minecraft:nether_wart_block"
+  },
+  "result": {
+    "count": 4,
+    "id": "minecraft:nether_wart"
+  }
+}

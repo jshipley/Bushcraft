@@ -128,11 +128,35 @@ public class BushcraftRecipeProvider extends FabricRecipeProvider {
         //     .define('C', ConventionalItemTags.COPPER_INGOTS)
         //     .unlockedBy(getHasName(ModItems.PITCH.get()), has(ModItems.PITCH.get()))
         //     .save(output, Bushcraft.id("crafting/fermenting_barrel"));
-        
-        offerChipping(output, "mulch_from_logs", new ChippingRecipe("", CookingBookCategory.MISC, Ingredient.of(ItemTags.LOGS), new ItemStack(ModItems.MULCH.get(), 8), 0.2f, 200));
-        offerChipping(output, "mulch_from_planks", new ChippingRecipe("", CookingBookCategory.MISC, Ingredient.of(ItemTags.PLANKS), new ItemStack(ModItems.MULCH.get(), 2), 0.1f, 200));
-        offerChipping(output, "mulch_from_sticks", new ChippingRecipe("", CookingBookCategory.MISC, Ingredient.of(ConventionalItemTags.WOODEN_RODS), new ItemStack(ModItems.MULCH.get()), 0.03f, 100));
-        offerChipping(output, "gravel_from_cobblestone", new ChippingRecipe("", CookingBookCategory.BLOCKS, Ingredient.of(ConventionalItemTags.COBBLESTONES), new ItemStack(Items.GRAVEL), 0.1f, 200));        
+
+        // Chipping - Stone
+        offerChipping(output, "gravel_from_cobblestones", ChippingRecipe.builder().category(CookingBookCategory.BLOCKS).input(ConventionalItemTags.COBBLESTONES).result(Items.GRAVEL).chanceResult(Items.SAND, 0.2f).experience(0.1f).build());
+        offerChipping(output, "gravel_from_stones", ChippingRecipe.builder().category(CookingBookCategory.BLOCKS).input(ConventionalItemTags.STONES).result(Items.GRAVEL).chanceResult(Items.SAND, 0.2f).experience(0.1f).build());
+        offerChipping(output, "gravel_from_stone_bricks", ChippingRecipe.builder().category(CookingBookCategory.BLOCKS).input(ItemTags.STONE_BRICKS).result(Items.GRAVEL).chanceResult(Items.SAND, 0.2f).experience(0.1f).build());
+        // Chipping - Mulch
+        offerChipping(output, "mulch_from_logs", ChippingRecipe.builder().input(ItemTags.LOGS).result(ModItems.MULCH.get(), 8).experience(0.2f).build());
+        offerChipping(output, "mulch_from_planks", ChippingRecipe.builder().input(ItemTags.PLANKS).result(ModItems.MULCH.get(), 2).experience(0.1f).build());
+        offerChipping(output, "mulch_from_saplings", ChippingRecipe.builder().input(ItemTags.SAPLINGS).result(ModItems.MULCH.get()).experience(0.1f).build());
+        offerChipping(output, "mulch_from_sticks", ChippingRecipe.builder().input(ConventionalItemTags.WOODEN_RODS).result(ModItems.MULCH.get()).experience(0.03f).build());
+        // Chipping - Uncrafting
+        offerChipping(output, "uncrafting/amethyst_from_block", ChippingRecipe.builder().input(Items.AMETHYST_BLOCK).result(Items.AMETHYST_SHARD, 4).experience(0.3f).build());
+        offerChipping(output, "uncrafting/brick_from_bricks", ChippingRecipe.builder().input(ConventionalItemTags.BRICKS).result(Items.BRICK, 4).experience(0.1f).build());
+        offerChipping(output, "uncrafting/brick_from_nether_bricks", ChippingRecipe.builder().input(ConventionalItemTags.NETHER_BRICKS).result(Items.NETHER_BRICK, 4).experience(0.1f).build());
+        offerChipping(output, "uncrafting/dripstone_from_block", ChippingRecipe.builder().input(Items.DRIPSTONE_BLOCK).result(Items.POINTED_DRIPSTONE).experience(0.2f).build());
+        offerChipping(output, "uncrafting/honeycomb_from_block", ChippingRecipe.builder().input(Items.HONEYCOMB_BLOCK).result(Items.HONEYCOMB, 4).experience(0.2f).build());
+        offerChipping(output, "uncrafting/netherwart_from_wart_block", ChippingRecipe.builder().input(Items.NETHER_WART_BLOCK).result(Items.NETHER_WART, 4).experience(0.1f).build());
+        offerChipping(output, "uncrafting/prismarine_from_block", ChippingRecipe.builder().input(Items.PRISMARINE).result(Items.PRISMARINE_SHARD, 4).chanceResult(Items.PRISMARINE_CRYSTALS, 0.2f).experience(0.2f).build());
+        offerChipping(output, "uncrafting/string_from_wool", ChippingRecipe.builder().input(ItemTags.WOOL).result(Items.STRING, 4).experience(0.1f).build());
+        // Chipping - Ores
+        offerChipping(output, "coal_from_ore", ChippingRecipe.builder().input(ConventionalItemTags.COAL_ORES).result(Items.COAL, 2).chanceResult(Items.GRAVEL, 0.4f).experience(0.2f).build());
+        offerChipping(output, "copper_from_ore", ChippingRecipe.builder().input(ConventionalItemTags.COPPER_ORES).result(Items.RAW_COPPER, 2).chanceResult(Items.GRAVEL, 0.4f).experience(0.2f).build());
+        offerChipping(output, "iron_from_ore", ChippingRecipe.builder().input(ConventionalItemTags.IRON_ORES).result(Items.RAW_IRON, 2).chanceResult(Items.GRAVEL, 0.4f).experience(0.2f).build());
+        offerChipping(output, "gold_from_ore", ChippingRecipe.builder().input(ConventionalItemTags.GOLD_ORES).result(Items.RAW_GOLD, 2).chanceResult(Items.GRAVEL, 0.4f).experience(0.2f).build());
+        offerChipping(output, "redstone_from_ore", ChippingRecipe.builder().input(ConventionalItemTags.REDSTONE_ORES).result(Items.REDSTONE, 6).chanceResult(Items.GRAVEL, 0.4f).experience(0.2f).build());
+        offerChipping(output, "emerald_from_ore", ChippingRecipe.builder().input(ConventionalItemTags.EMERALD_ORES).result(Items.EMERALD, 2).chanceResult(Items.GRAVEL, 0.4f).experience(0.3f).build());
+        offerChipping(output, "lapis_from_ore", ChippingRecipe.builder().input(ConventionalItemTags.LAPIS_ORES).result(Items.LAPIS_LAZULI, 8).chanceResult(Items.GRAVEL, 0.4f).experience(0.2f).build());
+        offerChipping(output, "diamond_from_ore", ChippingRecipe.builder().input(ConventionalItemTags.DIAMOND_ORES).result(Items.DIAMOND, 2).chanceResult(Items.GRAVEL, 0.4f).experience(0.3f).build());
+        offerChipping(output, "ancient_debris", ChippingRecipe.builder().input(Items.ANCIENT_DEBRIS).result(Items.NETHERITE_SCRAP, 2).chanceResult(Items.GOLD_NUGGET, 6, 0.1f).experience(0.2f).build());
 
         offerCooling(output, "obsidian_from_lava", CoolingRecipe.builder().input(Fluids.LAVA, FluidStack.bucketAmount()).result(Items.OBSIDIAN).build());
         offerCooling(output, "ice_from_water", CoolingRecipe.builder().input(Fluids.WATER, FluidStack.bucketAmount()).result(Items.ICE).time(1800).build());
@@ -253,13 +277,13 @@ public class BushcraftRecipeProvider extends FabricRecipeProvider {
             .requires(ModItems.PITCH_BUCKET.get())
             .unlockedBy(getHasName(ModItems.PITCH_BUCKET.get()), has(ModItems.PITCH_BUCKET.get()))
             .save(output, Bushcraft.id("crafting/pitch_block_from_bucket"));
-        
+
         twoByTwoPacker(output, RecipeCategory.REDSTONE, ModBlocks.PITCH_BLOCK.get(), ModItems.PITCH.get());
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.PITCH.get(), 4)
             .requires(ModBlocks.PITCH_BLOCK.get())
             .unlockedBy(getHasName(ModBlocks.PITCH_BLOCK.get()), has(ModBlocks.PITCH_BLOCK.get()))
             .save(output, Bushcraft.id("crafting/pitch_from_pitch_block"));
-        
+
         SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ModItems.BIRCH_SAP_BUCKET.get()), RecipeCategory.FOOD, ModItems.SYRUP_BUCKET.get(), 1.0f, 600)
             .unlockedBy(getHasName(ModItems.BIRCH_SAP_BUCKET.get()), has(ModItems.BIRCH_SAP_BUCKET.get()))
             .save(output, Bushcraft.id("campfire_cooking/syrup_bucket_from_birch_sap"));

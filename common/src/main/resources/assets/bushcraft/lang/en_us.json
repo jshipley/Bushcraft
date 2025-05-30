@@ -61,5 +61,12 @@
   "rei.category.bushcraft.cooling": "Cooling",
   "rei.category.bushcraft.drying": "Drying",
   "rei.category.bushcraft.melting": "Melting",
-  "rei.category.bushcraft.washing": "Washing"
+  "rei.category.bushcraft.washing": "Washing",
+  "sounds.bushcraft.chipper_working": "Chipper Rolling",
+  "tag.fluid.c.fuel": "Fuel",
+  "tag.fluid.c.saps": "Sap",
+  "tag.fluid.c.saps.birch": "Birch Sap",
+  "tag.fluid.c.saps.spruce": "Spruce Sap",
+  "tag.item.c.drinks.syrup": "Syrup (Drink)",
+  "tag.item.c.grass_variants": "Grass Variants"
 }

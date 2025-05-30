@@ -32,7 +32,7 @@ public class ChipperScreen extends AbstractContainerScreen<ChipperMenu> {
         guiGraphics.blit(TEXTURE, (width - imageWidth) / 2, (height - imageHeight) / 2, 0, 0, imageWidth, imageHeight);
         if (this.menu.isLit()) {
             int pct = Mth.ceil(this.menu.litProgress() * 13f) + 1;
-            guiGraphics.blitSprite(LIT_PROGRESS_TEXTURE, 14, 14, 0, 14 - pct, this.leftPos + 27, this.topPos + 38 + 14 - pct, 14, pct);
+            guiGraphics.blitSprite(LIT_PROGRESS_TEXTURE, 14, 14, 0, 14 - pct, this.leftPos + 25, this.topPos + 25 + 14 - pct, 14, pct);
         }
         int pct = Mth.ceil(this.menu.assembleProgress() * 24f);
         guiGraphics.blitSprite(ASSEMBLE_PROGRESS_TEXTURE, 24, 16, 0, 0, this.leftPos + 79, this.topPos + 34, pct, 16);

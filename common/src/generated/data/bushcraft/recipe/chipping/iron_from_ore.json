@@ -1,0 +1,18 @@
+{
+  "type": "bushcraft:chipping",
+  "chanceResult": {
+    "chance": 0.4,
+    "result": {
+      "count": 1,
+      "id": "minecraft:gravel"
+    }
+  },
+  "experience": 0.2,
+  "ingredient": {
+    "tag": "c:ores/iron"
+  },
+  "result": {
+    "count": 2,
+    "id": "minecraft:raw_iron"
+  }
+}

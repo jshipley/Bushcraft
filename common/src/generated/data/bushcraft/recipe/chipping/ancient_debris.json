@@ -1,0 +1,18 @@
+{
+  "type": "bushcraft:chipping",
+  "chanceResult": {
+    "chance": 0.1,
+    "result": {
+      "count": 6,
+      "id": "minecraft:gold_nugget"
+    }
+  },
+  "experience": 0.2,
+  "ingredient": {
+    "item": "minecraft:ancient_debris"
+  },
+  "result": {
+    "count": 2,
+    "id": "minecraft:netherite_scrap"
+  }
+}

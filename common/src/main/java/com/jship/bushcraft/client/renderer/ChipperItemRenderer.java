@@ -29,7 +29,8 @@ public class ChipperItemRenderer extends BlockAndItemGeoLayer<ChipperGeoBlockEnt
         val bonePos = bone.getLocalPosition();
 
         poseStack.scale(0.5f, 0.5f, 0.5f);
-        poseStack.translate(0, bonePos.y() + 0.5f - ((float)animatable.assembleTime() / (float)animatable.assembleTotalTime()), 0);
+        val progress = animatable.assembleTotalTime() > 0 ? (float)animatable.assembleTime() / (float)animatable.assembleTotalTime() : 0f; 
+        poseStack.translate(0, bonePos.y() + 0.5f - progress, 0);
 
         super.renderStackForBone(poseStack, bone, stack, animatable, bufferSource, partialTick, packedLight, packedOverlay);
         poseStack.popPose();

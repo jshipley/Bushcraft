@@ -12,6 +12,7 @@ import com.jship.bushcraft.init.ModFluids;
 import com.jship.bushcraft.init.ModItems;
 import com.jship.bushcraft.init.ModMenus;
 import com.jship.bushcraft.init.ModRecipes;
+import com.jship.bushcraft.init.ModSounds;
 import com.mojang.logging.LogUtils;
 
 import dev.architectury.registry.menu.MenuRegistry;
@@ -35,6 +36,7 @@ public final class Bushcraft {
         ModBlockEntities.init();
         ModItems.init();
         ModRecipes.init();
+        ModSounds.init();
     }
 
     public static void clientInit() {

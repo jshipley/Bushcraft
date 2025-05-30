@@ -93,11 +93,11 @@ public class ModItems {
                             .arch$tab(CreativeModeTabs.COMBAT)));
 
     public static void init() {
-        WOODEN_COG.listen(cog -> FuelRegistry.register(100, cog));
+        WOODEN_COG.listen(cog -> FuelRegistry.register(200, cog));
         PITCH_BUCKET.listen(pitchBucket -> FuelRegistry.register(6400, pitchBucket));
         SPRUCE_SAP_BUCKET.listen(sapBucket -> FuelRegistry.register(1600, sapBucket));
         PITCH.listen(pitch -> FuelRegistry.register(1600, pitch));
-        MULCH.listen(mulch -> FuelRegistry.register(20, mulch));
+        MULCH.listen(mulch -> FuelRegistry.register(100, mulch));
     }
 
     public static ResourceKey<Item> itemKey(ResourceLocation id) {

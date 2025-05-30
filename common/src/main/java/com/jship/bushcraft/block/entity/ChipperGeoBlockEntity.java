@@ -1,6 +1,5 @@
 package com.jship.bushcraft.block.entity;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,9 +19,7 @@ import com.jship.spiritapi.api.item.SpiritItemStorageProvider;
 import dev.architectury.registry.fuel.FuelRegistry;
 import dev.architectury.registry.menu.ExtendedMenuProvider;
 import io.netty.buffer.ByteBufAllocator;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import lombok.Getter;
 import lombok.val;
 import lombok.experimental.Accessors;
@@ -41,11 +38,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.RecipeCraftingHolder;
+import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -66,23 +66,22 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 @Slf4j
 @Accessors(fluent = true)
 public class ChipperGeoBlockEntity extends BlockEntity
-        implements GeoBlockEntity, SpiritItemStorageProvider, RecipeCraftingHolder, ExtendedMenuProvider {
+        implements GeoBlockEntity, SpiritItemStorageProvider, RecipeCraftingHolder, ExtendedMenuProvider, StackedContentsCompatible {
 
     public static final String ANIM_NAME = "chipper_animation";
     public static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenPlayAndHold("animation.model.idle");
     public static final RawAnimation WORKING_ANIM = RawAnimation.begin().thenLoop("animation.model.working");
 
-    public final SpiritItemStorage itemStorage = SpiritItemStorage.create(
-            ImmutableList.of(SlotConfig.builder()
-                    .validItem(stack -> this.level != null
-                            && quickCheck.getRecipeFor(new SingleRecipeInput(stack), this.level).isPresent())
-                    .canInsert(direction -> true).canExtract(direction -> false).build(),
-                    SlotConfig.builder().canInsert(direction -> direction.getAxis().isHorizontal())
-                            .canExtract(direction -> false)
+    public final SpiritItemStorage itemStorage = SpiritItemStorage
+            .create(ImmutableList.of(
+                    SlotConfig.builder()
+                            .validItem(stack -> this.level != null
+                                    && quickCheck.getRecipeFor(new SingleRecipeInput(stack), this.level).isPresent())
+                            .canInsert(direction -> true).canExtract(direction -> false).build(),
+                    SlotConfig.builder().canInsert(direction -> direction.getAxis().isHorizontal()).canExtract(direction -> false)
                             .validItem(stack -> AbstractFurnaceBlockEntity.isFuel(stack)).build(),
                     SlotConfig.builder().canInsert(direction -> false).playerInsert(false).build(),
-                    SlotConfig.builder().canInsert(direction -> false).playerInsert(false).build()),
-            this::setChanged);
+                    SlotConfig.builder().canInsert(direction -> false).playerInsert(false).build()), this::setChanged);
     public static final double SECONDS_PER_CYCLE = 2.0d;
 
     private static final RecipeManager.CachedCheck<SingleRecipeInput, ChippingRecipe> quickCheck = RecipeManager
@@ -90,10 +89,10 @@ public class ChipperGeoBlockEntity extends BlockEntity
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-    private static int INPUT_SLOT = 0;
-    private static int FUEL_SLOT = 1;
-    private static int OUTPUT_SLOT = 2;
-    private static int BONUS_SLOT = 3;
+    public static int INPUT_SLOT = 0;
+    public static int FUEL_SLOT = 1;
+    public static int OUTPUT_SLOT = 2;
+    public static int BONUS_SLOT = 3;
 
     @Getter
     protected int litTime = 0;
@@ -111,9 +110,7 @@ public class ChipperGeoBlockEntity extends BlockEntity
         recipesUsed = new Object2IntOpenHashMap<>();
     }
 
-    public boolean isLit() {
-        return litTime > 0;
-    }
+    public boolean isLit() { return litTime > 0; }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, ChipperGeoBlockEntity blockEntity) {
         var dirty = false;
@@ -131,6 +128,10 @@ public class ChipperGeoBlockEntity extends BlockEntity
         val fuelStack = blockEntity.itemStorage.getStackInSlot(FUEL_SLOT);
         val outputStack = blockEntity.itemStorage.getStackInSlot(OUTPUT_SLOT);
         val bonusStack = blockEntity.itemStorage.getStackInSlot(BONUS_SLOT);
+
+        if (inputStack.isEmpty() && blockEntity.assembleTime > 0) {
+            blockEntity.resetProgress(null);
+        }
 
         // there's an item to process, and heat to do it with
         if (!inputStack.isEmpty() && (blockEntity.isLit() || !fuelStack.isEmpty())) {
@@ -152,10 +153,9 @@ public class ChipperGeoBlockEntity extends BlockEntity
                         blockEntity.litTime = fuelTime;
                         blockEntity.litTotalTime = fuelTime;
                         val removedFuel = blockEntity.itemStorage.extractItem(FUEL_SLOT, 1, false);
-                        if (blockEntity.itemStorage.getStackInSlot(FUEL_SLOT).isEmpty()
-                                && removedFuel.getItem().hasCraftingRemainingItem())
-                            blockEntity.itemStorage.insertItem(FUEL_SLOT,
-                                    new ItemStack(removedFuel.getItem().getCraftingRemainingItem()), false);
+                        if (blockEntity.itemStorage.getStackInSlot(FUEL_SLOT).isEmpty() && removedFuel.getItem().hasCraftingRemainingItem())
+                            blockEntity.itemStorage.insertItem(FUEL_SLOT, new ItemStack(removedFuel.getItem().getCraftingRemainingItem()),
+                                    false);
                     }
                 }
 
@@ -163,7 +163,7 @@ public class ChipperGeoBlockEntity extends BlockEntity
                     blockEntity.assembleTime++;
                     dirty = true;
                     if (blockEntity.assembleTime >= blockEntity.assembleTotalTime) {
-                        if (assemble(recipe, blockEntity.itemStorage)) {
+                        if (assemble(recipe, blockEntity.itemStorage, level.getRandom())) {
                             blockEntity.setRecipeUsed(recipe.get());
                             blockEntity.resetProgress(null);
                         }
@@ -172,15 +172,15 @@ public class ChipperGeoBlockEntity extends BlockEntity
             }
         }
 
+        if (wasLit != blockEntity.isLit())
+            level.setBlock(pos, state.setValue(ChipperBlock.LIT, blockEntity.isLit()), 3);
+
         if (dirty) {
-            if (wasLit != blockEntity.isLit())
-                level.setBlock(pos, state.setValue(ChipperBlock.LIT, blockEntity.isLit()), 3);
             blockEntity.setChanged();
         }
     }
 
-    private static boolean canAssemble(Optional<RecipeHolder<ChippingRecipe>> recipe,
-            SpiritItemStorage itemStorage) {
+    private static boolean canAssemble(Optional<RecipeHolder<ChippingRecipe>> recipe, SpiritItemStorage itemStorage) {
         if (itemStorage.getStackInSlot(INPUT_SLOT).isEmpty() || !recipe.isPresent())
             return false;
 
@@ -191,12 +191,17 @@ public class ChipperGeoBlockEntity extends BlockEntity
         return itemStorage.insertItem(OUTPUT_SLOT, resultStack, true).isEmpty();
     }
 
-    private static boolean assemble(Optional<RecipeHolder<ChippingRecipe>> recipe, SpiritItemStorage itemStorage) {
+    private static boolean assemble(Optional<RecipeHolder<ChippingRecipe>> recipe, SpiritItemStorage itemStorage, RandomSource random) {
         if (recipe.isPresent() && canAssemble(recipe, itemStorage)) {
             val resultStack = recipe.get().value().result();
 
             itemStorage.extractItem(INPUT_SLOT, 1, false);
             itemStorage.insertItem(OUTPUT_SLOT, resultStack, false);
+            val chanceResult = recipe.get().value().chanceResult();
+            if (!chanceResult.isEmpty() && random.nextFloat() <= chanceResult.chance()) {
+                // If bonus slot is full, then I guess there's no random bonus for you.
+                itemStorage.insertItem(BONUS_SLOT, chanceResult.result(), false);
+            }
             return true;
         }
         return false;
@@ -215,9 +220,7 @@ public class ChipperGeoBlockEntity extends BlockEntity
     }
 
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return cache;
-    }
+    public AnimatableInstanceCache getAnimatableInstanceCache() { return cache; }
 
     @Override
     public void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
@@ -242,9 +245,7 @@ public class ChipperGeoBlockEntity extends BlockEntity
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
+    public Packet<ClientGamePacketListener> getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
@@ -263,9 +264,7 @@ public class ChipperGeoBlockEntity extends BlockEntity
     }
 
     @Override
-    public Component getDisplayName() {
-        return Component.translatable("container.bushcraft.chipper");
-    }
+    public Component getDisplayName() { return Component.translatable("container.bushcraft.chipper"); }
 
     @Override
     public void setChanged() {
@@ -275,9 +274,7 @@ public class ChipperGeoBlockEntity extends BlockEntity
     }
 
     @Override
-    public @Nullable SpiritItemStorage getItemStorage(Direction face) {
-        return this.itemStorage;
-    }
+    public @Nullable SpiritItemStorage getItemStorage(Direction face) { return this.itemStorage; }
 
     /*
      * Reward experience
@@ -292,12 +289,9 @@ public class ChipperGeoBlockEntity extends BlockEntity
     }
 
     @Nullable
-    public RecipeHolder<?> getRecipeUsed() {
-        return null;
-    }
+    public RecipeHolder<?> getRecipeUsed() { return null; }
 
-    public void awardUsedRecipes(Player player, List<ItemStack> items) {
-    }
+    public void awardUsedRecipes(Player player, List<ItemStack> items) {}
 
     public void awardUsedRecipesAndPopExperience(ServerPlayer player) {
         List<RecipeHolder<?>> list = this.getRecipesToAwardAndPopExperience(player.serverLevel(), player.position());
@@ -320,8 +314,7 @@ public class ChipperGeoBlockEntity extends BlockEntity
         for (var recipeEntry : this.recipesUsed.object2IntEntrySet()) {
             level.getRecipeManager().byKey(recipeEntry.getKey()).ifPresent(recipeHolder -> {
                 list.add(recipeHolder);
-                createExperience(level, popVec, recipeEntry.getIntValue(),
-                        ((AbstractCookingRecipe) recipeHolder.value()).getExperience());
+                createExperience(level, popVec, recipeEntry.getIntValue(), ((AbstractCookingRecipe) recipeHolder.value()).getExperience());
             });
         }
 
@@ -339,7 +332,13 @@ public class ChipperGeoBlockEntity extends BlockEntity
     }
 
     @Override
-    public void saveExtraData(FriendlyByteBuf buf) {
-        buf.writeBlockPos(this.getBlockPos());
+    public void saveExtraData(FriendlyByteBuf buf) { buf.writeBlockPos(this.getBlockPos()); }
+
+    @Override
+    public void fillStackedContents(StackedContents contents) {
+        for (int i = 0; i < itemStorage.getSlots(); i++) {
+            val stack = itemStorage.getStackInSlot(i);
+            contents.accountStack(stack);
+        }
     }
 }

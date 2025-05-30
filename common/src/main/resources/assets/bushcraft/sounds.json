@@ -1,0 +1,11 @@
+{
+    "chipper_working": {
+        "subtitles": "sounds.bushcraft.chipper_working",
+        "sounds": [
+            "bushcraft:fission9_tumbling_rocks_01",
+            "bushcraft:fission9_tumbling_rocks_02",
+            "bushcraft:fission9_tumbling_rocks_03",
+            "bushcraft:fission9_tumbling_rocks_04"
+        ]
+    }
+}

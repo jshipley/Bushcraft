@@ -1,0 +1,18 @@
+{
+  "type": "bushcraft:chipping",
+  "chanceResult": {
+    "chance": 0.2,
+    "result": {
+      "count": 1,
+      "id": "minecraft:prismarine_crystals"
+    }
+  },
+  "experience": 0.2,
+  "ingredient": {
+    "item": "minecraft:prismarine"
+  },
+  "result": {
+    "count": 4,
+    "id": "minecraft:prismarine_shard"
+  }
+}

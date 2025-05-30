@@ -1,0 +1,19 @@
+{
+  "type": "bushcraft:chipping",
+  "category": "blocks",
+  "chanceResult": {
+    "chance": 0.2,
+    "result": {
+      "count": 1,
+      "id": "minecraft:sand"
+    }
+  },
+  "experience": 0.1,
+  "ingredient": {
+    "tag": "c:stones"
+  },
+  "result": {
+    "count": 1,
+    "id": "minecraft:gravel"
+  }
+}
